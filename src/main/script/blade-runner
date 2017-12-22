@@ -1,0 +1,107 @@
+#!/usr/bin/env bash
+#
+# env: HOME
+#
+set -e
+
+
+
+declare -r LOG_BASE_DIR=$HOME/.local/share/log/blade-runner
+
+# txt: print script usage info to stdout
+usage() {
+	echo 'Job runner'
+	echo
+	echo 'Usage:'
+	echo '    blade-runner [ -n|--job-name <job_name> ] command [ arg1 ... ]'
+}
+
+# fun: log multiword message
+# txt: log message to file
+# env: dest
+log() {
+	message="[$(date +%Y-%m-%d_%H-%M-%S)] blade-runner: $@"
+	echo "$message" | tee -a "$dest"
+}
+
+
+# fun: run command [ arg1 [ arg2 ... ] ]
+# env: stdout_log
+#      stderr_log
+#      runner_log
+#      attempts
+#      interval
+run() {
+	dest="$runner_log" log "starting job $@"
+	try=0
+	while true; do
+		if eval "$@" >> "$stdout_log" 2>> "$stderr_log"; then
+			dest="$runner_log" log "successfully executed job $@"
+			break
+		else
+			dest="$runner_log" log "$@: exited with error code $?, see $stderr_log for details"
+		fi
+
+		try=$[ $try + 1 ]
+		if [[ $try -le $attempts ]]; then
+			sleep $interval
+		else
+			dest="$runner_log" log "abandoned job after $TRY attempts $@"
+			return 1
+		fi
+	done
+}
+
+
+
+main() {
+	if [[ -z "${1:-}" ]]; then
+		>2 echo 'empty arguments, see `blade-runner -h` for help'
+		exit 1
+	fi
+
+	if [[ -z "${2:-}" ]]; then
+		if [ _-h == "_$1" -o _--help == "_$1" -o _-? == "_$1" ]; then
+			usage
+			return 0
+		fi
+	fi
+
+	job_name=
+	attempts=3
+	interval=300
+	while [[ -n "${1:-}" ]]; do
+		if   [ _--job-name == "_$1" -o _-n == "_$1" ]; then
+			job_name="$2"
+			shift 2
+		elif [ _--working-dir == "_$1" -o _-d == "_$1" ]; then
+			pushd "$2"
+			shift 2
+		else
+			break
+		fi
+	done
+
+	if [[ -z "${1:-}" ]]; then
+		2> echo 'empty command, see `blade-runner -h` for help'
+		exit 1
+	fi
+
+	if [[ -z "$job_name" ]]; then
+		job_name="$1"
+	fi
+
+	now="$(date +%Y-%m-%d_%H-%M-%S)"
+	mkdir -p "$LOG_BASE_DIR/$job_name"
+
+	stdout_log="$LOG_BASE_DIR/$job_name/$now.stdout.log" \
+			stderr_log="$LOG_BASE_DIR/$job_name/$now.stderr.log" \
+			runner_log="$LOG_BASE_DIR/$job_name/$now.runner.log" \
+			attempts=$attempts \
+			interval=$interval \
+			run $@
+}
+
+main "$@"
+
+
