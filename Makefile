@@ -1,40 +1,72 @@
+name=manuscript
+version=$(shell cat VERSION)
 
-SRC=src
-TARGET=target
-BIN=${TARGET}/bin
+
+SHELL=/bin/sh
+
+DESTDIR?=
+prefix?=/usr/local
+exec_prefix?=${prefix}
+bindir?=${exec_prefix}/bin
+datarootdir?=${prefix}/share
+datadir?=${datarootdir}
+owndatadir?=${datadir}/${name}
+
+source_dir=src
+target_dir=target
+
+uninstall_script='${DESTDIR}${owndatadir}/uninstall'
 
 .PHONY: all
-all: foreach sub-foreach intellij-idea-trial-reset.cmd blade-runner daemonize.cmd daemonize.vbs
+all: all-script
+	echo ${VERSION}
 
 .PHONY: clean
 clean:
-	rm -rf ${TARGET}
+	rm -rf ${target_dir}
 
-${TARGET}:
+${target_dir}: 
 	mkdir -p $@
 
-${BIN}: target
+
+.PHONY: install
+install: install-scripts
+	mkdir -p $(dir '${uninstall_script}')
+	echo '#!/usr/bin/env bash' > '${uninstall_script}'
+	$(MAKE) --silent --dry-run uninstall >> '${uninstall_script}'
+	chmod ugo+x '${uninstall_script}'
+
+.PHONY: uninstall
+uninstall: uninstall-scripts
+	rm -rf '${DESTDIR}${prefix}/share/isimple-scripts'
+
+
+
+
+######## scripts ########
+
+script_source_dir=${source_dir}/main/script
+script_source_names=$(shell ls -1 ${script_source_dir})
+script_sources=$(addprefix ${script_source_dir}/, ${script_source_names})
+
+script_target_dir=${target_dir}/script
+script_targets=$(addprefix ${script_target_dir}/, ${script_source_names})
+
+${script_target_dir}: target
 	mkdir -p $@
 
-.PHONY: idea
-idea: intellij-idea-trial-reset.cmd
+${script_target_dir}/%: ${script_source_dir}/% ${script_target_dir}
+	cat $< | sed -e 's|{{prefix}}|${prefix}|g; s|{{version}}|${version}|g' > $@
 
+.PHONY: all-script
+all-scripts: ${script_targets}
 
-# usage: make_target script-name src-extension target-extension
-# e.g. make_target script .bash .sh
-define make_target=
-.PHONY:           ${1}${3}
-${1}${3}:         $${BIN}/${1}${3}
-$${BIN}/${1}${3}: $${SRC}/${1}${2} $${BIN}
-	cp -T $$< $$@
-endef
+.PHONY: install-script
+install-scripts: ${script_targets}
+	mkdir -p ${DESTDIR}${bindir}
+	install --compare $^ ${DESTDIR}${bindir}
 
-$(eval $(call make_target,foreach,.sh,))
-$(eval $(call make_target,sub-foreach,.sh,))
-$(eval $(call make_target,intellij-idea-trial-reset,.cmd,.cmd))
-$(eval $(call make_target,blade-runner,.sh,))
-$(eval $(call make_target,daemonize,.cmd,.cmd))
-$(eval $(call make_target,daemonize,.vbs,.vbs))
-
-
+.PHONY: uninstall-script
+uninstall-scripts:
+	rm -f $(addprefix ${DESTDIR}${bindir}/,${script_source_names})
 
