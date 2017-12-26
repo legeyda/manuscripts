@@ -1,4 +1,4 @@
-name=manuscript
+name=isimple-scripts
 version=$(shell cat VERSION)
 
 
@@ -15,11 +15,10 @@ owndatadir?=${datadir}/${name}
 source_dir=src
 target_dir=target
 
-uninstall_script='${DESTDIR}${owndatadir}/uninstall'
+uninstall_script=${DESTDIR}${owndatadir}/uninstall
 
 .PHONY: all
-all: all-script
-	echo ${VERSION}
+all: all-scripts
 
 .PHONY: clean
 clean:
@@ -31,7 +30,7 @@ ${target_dir}:
 
 .PHONY: install
 install: install-scripts
-	mkdir -p $(dir '${uninstall_script}')
+	mkdir -p $(shell dirname '${uninstall_script}')
 	echo '#!/usr/bin/env bash' > '${uninstall_script}'
 	$(MAKE) --silent --dry-run uninstall >> '${uninstall_script}'
 	chmod ugo+x '${uninstall_script}'
@@ -49,7 +48,7 @@ script_source_dir=${source_dir}/main/script
 script_source_names=$(shell ls -1 ${script_source_dir})
 script_sources=$(addprefix ${script_source_dir}/, ${script_source_names})
 
-script_target_dir=${target_dir}/script
+script_target_dir=${target_dir}/main/script
 script_targets=$(addprefix ${script_target_dir}/, ${script_source_names})
 
 ${script_target_dir}: target
@@ -57,16 +56,17 @@ ${script_target_dir}: target
 
 ${script_target_dir}/%: ${script_source_dir}/% ${script_target_dir}
 	cat $< | sed -e 's|{{prefix}}|${prefix}|g; s|{{version}}|${version}|g' > $@
+	bash src/make/script/process-includes '$@'
 
-.PHONY: all-script
+.PHONY: all-scripts
 all-scripts: ${script_targets}
 
-.PHONY: install-script
+.PHONY: install-scripts
 install-scripts: ${script_targets}
 	mkdir -p ${DESTDIR}${bindir}
 	install --compare $^ ${DESTDIR}${bindir}
 
-.PHONY: uninstall-script
+.PHONY: uninstall-scripts
 uninstall-scripts:
 	rm -f $(addprefix ${DESTDIR}${bindir}/,${script_source_names})
 

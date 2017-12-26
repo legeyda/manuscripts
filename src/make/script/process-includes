@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+
+if [ -d src/main/include ]; then
+
+	FILE=$1
+
+	ls -1 src/main/include | while read INCLUDE; do
+		echo "processing includes for $INCLUDE"
+		DATA=$(cat $FILE)
+		what="{{include:$INCLUDE}}"
+		with=$(cat "src/main/include/$INCLUDE")
+		DATA=${DATA//$what/$with}
+		echo "$DATA" > $FILE
+	done
+
+fi
