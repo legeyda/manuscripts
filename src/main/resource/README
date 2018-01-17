@@ -1,0 +1,5 @@
+some scripts
+
+version:        {{version}}
+install prefix: {{prefix}}
+data dir:       {{owndatadir}}
