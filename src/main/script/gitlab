@@ -1,0 +1,137 @@
+#!/usr/bin/env bash
+
+
+set -u
+
+print-usage() {
+	echo "GitLab api consumer
+
+Usage:
+  use-api (-h|-?|-help|--help)  display help and exit
+  use-api (-t|--token) <gitlab access token> (-u|--base-url) <gitlab base-url> list-projects  
+  use-api (-t|--token) <gitlab access token> (-u|--base-url) <gitlab base-url> list-groups  
+
+  webapp-run (-w|--webapp) <webapp> [-p|--port <port>] [-C|--context <path>] [-c|-cp|--classpath <path>] [-m|--map <resource> <path>] [-n|--no-run]
+
+Options:
+  -h --help                     Show this screen.
+  -t --token    <access token>  Access token
+  -u --base-url <gitlab url>    WAR or expanded WAR to serve
+
+Environment variables:
+  GITLAB_API_TOKEN token     Directory containing files needed by this script.
+  
+  GITLAB_BASE_URL base-url   Gitlab base url"
+}
+
+
+
+# env: token
+#      base_url
+make-api-request() {
+	curl --silent --header "PRIVATE-TOKEN: $token" $base_url/api/v4/$1
+}
+
+# fun: get-pageable-list <api part> <json path to extract>
+# env: token
+#      base_url
+#      page_size?
+get-pageable-list() {
+	local url=$1
+	local jquery=${2:-}
+	local page=1
+	while true; do
+		local output=$(make-api-request "$url?statistics=true&per_page=${page_size:-100}&page=$page")
+		if [[ '[]' == "$output" ]]; then
+			break;
+		fi
+		jq -Mr ".[]$jquery" <<< "$output"
+		page=$[page+1]
+	done
+}
+
+errcho() {
+	(>&2 echo "$1")
+}
+
+# fun: raw-list <subreq>
+# env: token
+#      base_url
+list-raw() {
+	token="$token" base_url="$base_url" get-pageable-list "$1" ''
+}
+
+# env: token
+#      base_url
+list-groups() {
+	token="$token" base_url="$base_url" get-pageable-list groups .full_path
+}
+
+# env: token
+#      base_url
+list-projects() {
+	token="$token" base_url="$base_url" get-pageable-list projects .path_with_namespace
+}
+
+
+
+
+main() {
+
+	if [ "${1:-}" == -h -o "${1:-}" == -help -o "${1:-}" == --help -o "${1:-}" == -? ]; then
+		print-usage
+		return
+	fi
+
+
+	local token="${token:-}"
+	if [ -z "${token:+x}" ]; then
+		token="${GITLAB_API_TOKEN:-}"
+	fi
+
+	local base_url="${base_url:-}"
+	if [ -z "${base_url:+x}" ]; then
+		base_url="${GITLAB_BASE_URL:-}"
+	fi
+
+	# see https://www.gnu.org/software/bash/manual/html_node/Shell-Parameter-Expansion.html
+	# ${parameter:+word} If parameter is null or unset, nothing is substituted, otherwise the expansion of word is substituted.
+	while [ -n "${1:+x}" ]; do
+		if [ "$1" == -t -o "$1" == --token ]; then
+			if [ -z "${2:-}" ]; then
+				errcho "expected value for argument $1"
+				return 1
+			fi
+			token="$2"
+			shift 2
+		elif [ "$1" == -u -o "$1" == --base-url ]; then
+			if [ -z "${2:-}" ]; then
+				errcho "expected value for argument $1"
+				return 1
+			fi
+			base_url="$2"
+			shift 2
+		elif [ "$1" == list-projects ]; then
+			shift
+			token="$token" base_url="$base_url" list-projects "$@" && return
+		elif [ "$1" == list-groups ]; then
+			shift
+			list-groups "$@" && return
+		elif [ "$1" == list-raw ]; then
+			if [ -z "${2:-}" ]; then
+				errcho "expected argument after $1"
+				return 1
+			fi
+			shift
+			list-raw $1 && return
+		else
+			errcho "Unexpected command line argument $1. Run 'use-api -h' for help"
+			return 1
+		fi
+	done
+
+	errcho "No command supplied. Run 'use-api -h' for help"
+	return 1
+}
+
+main "$@"
