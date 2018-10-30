@@ -1,17 +1,9 @@
 name:=manuscripts
 version=$(shell cat VERSION)
 
-# get version
-version2:=$(shell cat VERSION)
-ifeq (${version2},) 
-version2:=0.1.0
-endif
-
-
-
 SHELL=/bin/sh
-
 DESTDIR?=
+
 prefix?=/usr/local
 exec_prefix?=${prefix}
 bindir?=${exec_prefix}/bin
@@ -31,7 +23,7 @@ all: script-all share-all
 check: script-check
 
 .PHONY: clean
-clean: script-clean share-clean
+clean: script-clean script-check-clean share-clean
 	rm -rf ${target_dir}
 
 ${target_dir}: 

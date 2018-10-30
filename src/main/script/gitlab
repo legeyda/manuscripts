@@ -125,12 +125,12 @@ main() {
 			shift
 			list-raw $1 && return
 		else
-			errcho "Unexpected command line argument $1. Run 'use-api -h' for help"
+			errcho "Unexpected command line argument $1. Run 'gitlab -h' for help"
 			return 1
 		fi
 	done
 
-	errcho "No command supplied. Run 'use-api -h' for help"
+	errcho "No command supplied. Run 'gitlab -h' for help"
 	return 1
 }
 
