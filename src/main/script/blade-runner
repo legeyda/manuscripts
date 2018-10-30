@@ -46,7 +46,7 @@ run() {
 		if [[ $try -le $attempts ]]; then
 			sleep $interval
 		else
-			dest="$runner_log" log "abandoned job after $TRY attempts $@"
+			dest="$runner_log" log "abandoned job after $try attempts: $@"
 			return 1
 		fi
 	done

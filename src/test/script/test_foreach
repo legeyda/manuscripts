@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+cd $(mktemp -d)
+
+mkdir -p 1 2 3
+
+foreach 1 2 3 -- 'echo hello-$CURRENT_BASE_NAME' | grep hello-1 || exit 1
+foreach 1 2 3 -- 'echo hello-$CURRENT_BASE_NAME' | grep hello-2 || exit 1
+foreach 1 2 3 -- 'echo hello-$CURRENT_BASE_NAME' | grep hello-3 || exit 1

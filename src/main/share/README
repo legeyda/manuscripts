@@ -1,4 +1,4 @@
-some scripts
+{{name}}
 
 version:        {{version}}
 install prefix: {{prefix}}
