@@ -54,19 +54,36 @@ install-uninstaller:
 
 include_main_include_dir=${source_dir}/main/include
 
+
 # fun: $(call process_includes,<input file>,<outout file>)
 # txt: reads input file, replaces all placeholders and saves to output file
-define process_includes
-	@data=$$(sed -e 's|{{prefix}}|${prefix}|g; s|{{name}}|${name}|g; s|{{version}}|${version}|g; s|{{owndatadir}}|${owndatadir}|g;' $(1)); \
+#      handles binary files, but is somewhat slower
+define process_includes_on_disk
+	sed -e 's|{{prefix}}|${prefix}|g; s|{{name}}|${name}|g; s|{{version}}|${version}|g; s|{{owndatadir}}|${owndatadir}|g;' '$(1)' > '$(2)'; \
+	test -d ${include_main_include_dir} && find ${include_main_include_dir} -type f | while read file; do \
+		what="{{include:$$file}}"; \
+		with=$$(cat "src/main/include/$$file"); \
+		sed -i.back -e 's|$$what|$$with|g' '$(2)'; \
+	done || true
+endef
+
+# fun: $(call process_includes,<input file>,<outout file>)
+# txt: reads input file, replaces all placeholders and saves to output file
+#      seems to be faster, but corrupts binary files
+define process_includes_in_memory
+	data=$$(sed -e 's|{{prefix}}|${prefix}|g; s|{{name}}|${name}|g; s|{{version}}|${version}|g; s|{{owndatadir}}|${owndatadir}|g;' $(1)); \
 	test -d ${include_main_include_dir} && find ${include_main_include_dir} -type f | while read file; do \
 		what="{{include:$$file}}"; \
 		with=$$(cat "src/main/include/$$file"); \
 		data="$${data//$$what/$$with}"; \
-	done; \
-	echo "$$data" > $(2)
+	done || true; \
+	echo -n -e "$$data" > '$(2)'
 endef
 
-
+# we do not have binary files now, so use faster option
+define process_includes
+	${process_includes_in_memory}
+endef
 
 
 ######## script-main ########
