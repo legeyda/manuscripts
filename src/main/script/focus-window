@@ -1,0 +1,86 @@
+#!/usr/bin/env bash
+set -e
+
+print-usage() {
+	echo "Focus window by its title substring
+
+Usage:
+	focus-window --title 'Double Commander'
+	focus-window --title 'Double Commander' --command doublecmd
+
+Options:
+	-h -help --help -?     Show this screen.
+	-t --title             window title substring to grep for and focus it
+	-c --command           bash command to run if no such window found"
+}
+
+
+
+{{include:bash-lib}}
+
+
+
+
+
+
+
+#env: title 
+#     command
+focus() {
+	local found_titles=$(wmctrl -l | grep "$title" | awk '{$1=$2=$3=""; print substr($0, 4)}')
+	if [ -n "$found_titles" ]; then
+		# todo: iterate over windows or not?
+		found_title=$(echo "$found_titles" | sed '1q;d')
+	fi
+
+	if [ -n "$found_title" ]; then
+		echo "window:$found_title"
+		wmctrl -R "$found_title"
+		sleep 0.2
+		wmctrl -R "$found_title"
+	elif [ -n "$command" ]; then
+		echo "command:$command"
+		bash -c "$command"
+	fi
+}
+
+
+
+main() {
+
+	if [ "${1:-}" == -h -o "${1:-}" == -help -o "${1:-}" == --help -o "${1:-}" == -? ]; then
+		print-usage
+		return
+	fi
+
+	local title
+	local command
+	while [ -n "${1:+x}" ]; do
+		if [ "$1" == -t -o "$1" == --title ]; then
+			if [ -z "${2:-}" ]; then
+				errcho "expected value for argument $1"
+				return 1
+			fi
+			title="$2"
+			shift 2
+		elif [ "$1" == -c -o "$1" == --command ]; then
+			if [ -z "${2:-}" ]; then
+				errcho "expected value for argument $1"
+				return 1
+			fi
+			command="$2"
+			shift 2
+		else
+			errxit 1 "Unexpected argument '$1'. See 'focus-window -h' for help"
+		fi
+	done
+
+	title=$title command=$command focus
+
+}
+
+
+
+
+
+main "$@"

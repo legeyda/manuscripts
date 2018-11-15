@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+#set -e
+
+ps --user "$USER" -o pid,args | grep --invert-match grep | grep "$1" | awk '{print $1}' | xargs --max-args 1 --no-run-if-empty kill

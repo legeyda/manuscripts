@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+mkdir -p ~/.local/var/log/logg
+
+echo >>  ~/.local/var/log/logg/stdout.txt 
+echo >>  ~/.local/var/log/logg/stdout.txt 
+echo "======== logg $(date) ========" >>  ~/.local/var/log/logg/stdout.txt 
+
+bash -exc "$@" \
+    >>  ~/.local/var/log/logg/stdout.txt \
+    2>> ~/.local/var/log/logg/stderr.txt

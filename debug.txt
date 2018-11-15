@@ -1,0 +1,446 @@
+rm -rf target/main/script
+rm -rf target/script-check-prefix
+rm -rf target/main/share
+rm -rf target
+mkdir -p target/main/script/
+data=$(sed -e 's|{{prefix}}|/home/user/.local|g; s|{{name}}|manuscripts|g; s|{{version}}|0.1.0-SNAPSHOT|g; s|{{owndatadir}}|/home/user/.local/share/manuscripts|g;' src/main/script/gitlab); echo "=================$data"; test -d src/main/include && find src/main/include -type f | while read file; do what="{{include:$file}}"; with=$(cat "src/main/include/$file"); data="${data//$what/$with}"; echo "=================$data"; done || true; echo -n -e "$data" > 'target/main/script/gitlab'
+=================#!/usr/bin/env bash
+
+
+set -u
+
+print-usage() {
+	echo "GitLab api consumer
+
+Usage:
+  use-api (-h|-?|-help|--help)  display help and exit
+  use-api (-t|--token) <gitlab access token> (-u|--base-url) <gitlab base-url> list-projects  
+  use-api (-t|--token) <gitlab access token> (-u|--base-url) <gitlab base-url> list-groups  
+
+  webapp-run (-w|--webapp) <webapp> [-p|--port <port>] [-C|--context <path>] [-c|-cp|--classpath <path>] [-m|--map <resource> <path>] [-n|--no-run]
+
+Options:
+  -h --help                     Show this screen.
+  -t --token    <access token>  Access token
+  -u --base-url <gitlab url>    WAR or expanded WAR to serve
+
+Environment variables:
+  GITLAB_API_TOKEN token     Directory containing files needed by this script.
+  
+  GITLAB_BASE_URL base-url   Gitlab base url"
+}
+
+
+
+# env: token
+#      base_url
+make-api-request() {
+	curl --silent --header "PRIVATE-TOKEN: $token" $base_url/api/v4/$1
+}
+
+# fun: get-pageable-list <api part> <json path to extract>
+# env: token
+#      base_url
+#      page_size?
+#      params
+get-pageable-list() {
+	local url=$1
+	local jquery=${2:-}
+	local page=1
+	if [ -n "${params:-}" ]; then
+		local query_suffix="&$params"
+	else
+		local query_suffix=''
+	fi
+	while true; do
+		local output=$(make-api-request "$url?statistics=true&per_page=${page_size:-100}&page=$page$query_suffix")
+		if [[ '[]' == "$output" ]]; then
+			break;
+		fi
+		jq -Mr ".[]$jquery" <<< "$output"
+		page=$[page+1]
+	done
+}
+
+errcho() {
+	(>&2 echo "$1")
+}
+
+# fun: raw-list <subreq>
+# env: token
+#      base_url
+list-raw() {
+	token="$token" base_url="$base_url" get-pageable-list "$1" ''
+}
+
+# env: token
+#      base_url
+list-groups() {
+	token="$token" base_url="$base_url" get-pageable-list groups .full_path
+}
+
+# env: token
+#      base_url
+list-projects() {
+	token="$token" base_url="$base_url" get-pageable-list projects .path_with_namespace
+}
+
+
+
+
+main() {
+
+	if [ "${1:-}" == -h -o "${1:-}" == -help -o "${1:-}" == --help -o "${1:-}" == -? ]; then
+		print-usage
+		return
+	fi
+
+
+	local token="${token:-}"
+	if [ -z "${token:+x}" ]; then
+		token="${GITLAB_API_TOKEN:-}"
+	fi
+
+	local base_url="${base_url:-}"
+	if [ -z "${base_url:+x}" ]; then
+		base_url="${GITLAB_BASE_URL:-}"
+	fi
+
+	# see https://www.gnu.org/software/bash/manual/html_node/Shell-Parameter-Expansion.html
+	# ${parameter:+word} If parameter is null or unset, nothing is substituted, otherwise the expansion of word is substituted.
+	while [ -n "${1:+x}" ]; do
+		if [ "$1" == -t -o "$1" == --token ]; then
+			if [ -z "${2:-}" ]; then
+				errcho "expected value for argument $1"
+				return 1
+			fi
+			token="$2"
+			shift 2
+		elif [ "$1" == -u -o "$1" == --base-url ]; then
+			if [ -z "${2:-}" ]; then
+				errcho "expected value for argument $1"
+				return 1
+			fi
+			base_url="$2"
+			shift 2
+		elif [ "$1" == list-projects ]; then
+			shift
+			token="$token" base_url="$base_url" list-projects "$@" && return
+		elif [ "$1" == list-groups ]; then
+			shift
+			list-groups "$@" && return
+		elif [ "$1" == list-raw ]; then
+			if [ -z "${2:-}" ]; then
+				errcho "expected argument after $1"
+				return 1
+			fi
+			shift
+			list-raw $1 && return
+		else
+			errcho "Unexpected command line argument $1. Run 'gitlab -h' for help"
+			return 1
+		fi
+	done
+
+	errcho "No command supplied. Run 'gitlab -h' for help"
+	return 1
+}
+
+main "$@"
+chmod ugo+x target/main/script/gitlab
+mkdir -p target/main/script/
+data=$(sed -e 's|{{prefix}}|/home/user/.local|g; s|{{name}}|manuscripts|g; s|{{version}}|0.1.0-SNAPSHOT|g; s|{{owndatadir}}|/home/user/.local/share/manuscripts|g;' src/main/script/daemonize.cmd); echo "=================$data"; test -d src/main/include && find src/main/include -type f | while read file; do what="{{include:$file}}"; with=$(cat "src/main/include/$file"); data="${data//$what/$with}"; echo "=================$data"; done || true; echo -n -e "$data" > 'target/main/script/daemonize.cmd'
+=================@Echo Off
+cscript %~dp0\daemonize.vbs %*
+chmod ugo+x target/main/script/daemonize.cmd
+mkdir -p target/main/script/
+data=$(sed -e 's|{{prefix}}|/home/user/.local|g; s|{{name}}|manuscripts|g; s|{{version}}|0.1.0-SNAPSHOT|g; s|{{owndatadir}}|/home/user/.local/share/manuscripts|g;' src/main/script/intellij-idea-trial-reset.cmd); echo "=================$data"; test -d src/main/include && find src/main/include -type f | while read file; do what="{{include:$file}}"; with=$(cat "src/main/include/$file"); data="${data//$what/$with}"; echo "=================$data"; done || true; echo -n -e "$data" > 'target/main/script/intellij-idea-trial-reset.cmd'
+=================rem see https://gist.github.com/xSAVIKx/211f5992aa6d570e63f1022ba695211a
+setlocal
+
+rem delete configval
+cd "%USERPROFILE%\.IntelliJIdea*chmod ugo+x target/main/script/intellij-idea-trial-reset.cmd
+mkdir -p target/main/script/
+data=$(sed -e 's|{{prefix}}|/home/user/.local|g; s|{{name}}|manuscripts|g; s|{{version}}|0.1.0-SNAPSHOT|g; s|{{owndatadir}}|/home/user/.local/share/manuscripts|g;' src/main/script/blade-runner); echo "=================$data"; test -d src/main/include && find src/main/include -type f | while read file; do what="{{include:$file}}"; with=$(cat "src/main/include/$file"); data="${data//$what/$with}"; echo "=================$data"; done || true; echo -n -e "$data" > 'target/main/script/blade-runner'
+=================#!/usr/bin/env bash
+#
+# env: HOME
+#
+set -e
+
+
+
+declare -r LOG_BASE_DIR=$HOME/.local/share/log/blade-runner
+
+# txt: print script usage info to stdout
+usage() {
+	echo 'Job runner'
+	echo
+	echo 'Usage:'
+	echo '    blade-runner [ -n|--job-name <job_name> ] command [ arg1 ... ]'
+}
+
+# fun: log multiword message
+# txt: log message to file
+# env: dest
+log() {
+	message="[$(date +%Y-%m-%d_%H-%M-%S)] blade-runner: $@"
+	echo "$message" | tee -a "$dest"
+}
+
+
+# fun: run command [ arg1 [ arg2 ... ] ]
+# env: stdout_log
+#      stderr_log
+#      runner_log
+#      attempts
+#      interval
+run() {
+	dest="$runner_log" log "starting job $@"
+	try=0
+	while true; do
+		if eval "$@" >> "$stdout_log" 2>> "$stderr_log"; then
+			dest="$runner_log" log "successfully executed job $@"
+			break
+		else
+			dest="$runner_log" log "$@: exited with error code $?, see $stderr_log for details"
+		fi
+
+		try=$[ $try + 1 ]
+		if [[ $try -le $attempts ]]; then
+			sleep $interval
+		else
+			dest="$runner_log" log "abandoned job after $try attempts: $@"
+			return 1
+		fi
+	done
+}
+
+
+
+main() {
+	if [[ -z "${1:-}" ]]; then
+		>2 echo 'empty arguments, see `blade-runner -h` for help'
+		exit 1
+	fi
+
+	if [[ -z "${2:-}" ]]; then
+		if [ _-h == "_$1" -o _--help == "_$1" -o _-? == "_$1" ]; then
+			usage
+			return 0
+		fi
+	fi
+
+	job_name=
+	attempts=3
+	interval=300
+	while [[ -n "${1:-}" ]]; do
+		if   [ _--job-name == "_$1" -o _-n == "_$1" ]; then
+			job_name="$2"
+			shift 2
+		elif [ _--working-dir == "_$1" -o _-d == "_$1" ]; then
+			pushd "$2"
+			shift 2
+		else
+			break
+		fi
+	done
+
+	if [[ -z "${1:-}" ]]; then
+		2> echo 'empty command, see `blade-runner -h` for help'
+		exit 1
+	fi
+
+	if [[ -z "$job_name" ]]; then
+		job_name="$1"
+	fi
+
+	now="$(date +%Y-%m-%d_%H-%M-%S)"
+	mkdir -p "$LOG_BASE_DIR/$job_name"
+
+	stdout_log="$LOG_BASE_DIR/$job_name/$now.stdout.log" \
+			stderr_log="$LOG_BASE_DIR/$job_name/$now.stderr.log" \
+			runner_log="$LOG_BASE_DIR/$job_name/$now.runner.log" \
+			attempts=$attempts \
+			interval=$interval \
+			run $@
+}
+
+main "$@"
+
+
+chmod ugo+x target/main/script/blade-runner
+mkdir -p target/main/script/
+data=$(sed -e 's|{{prefix}}|/home/user/.local|g; s|{{name}}|manuscripts|g; s|{{version}}|0.1.0-SNAPSHOT|g; s|{{owndatadir}}|/home/user/.local/share/manuscripts|g;' src/main/script/kill-by-grep); echo "=================$data"; test -d src/main/include && find src/main/include -type f | while read file; do what="{{include:$file}}"; with=$(cat "src/main/include/$file"); data="${data//$what/$with}"; echo "=================$data"; done || true; echo -n -e "$data" > 'target/main/script/kill-by-grep'
+=================#!/usr/bin/env bash
+set -xe
+
+ps --user "$USER" -o pid,args | grep --invert-match grep | grep "$1" | awk '{print $1}' | xargs --max-args 1 --no-run-if-empty kill
+chmod ugo+x target/main/script/kill-by-grep
+mkdir -p target/main/script/
+data=$(sed -e 's|{{prefix}}|/home/user/.local|g; s|{{name}}|manuscripts|g; s|{{version}}|0.1.0-SNAPSHOT|g; s|{{owndatadir}}|/home/user/.local/share/manuscripts|g;' src/main/script/foreach); echo "=================$data"; test -d src/main/include && find src/main/include -type f | while read file; do what="{{include:$file}}"; with=$(cat "src/main/include/$file"); data="${data//$what/$with}"; echo "=================$data"; done || true; echo -n -e "$data" > 'target/main/script/foreach'
+=================#!/usr/bin/env bash
+
+USAGE="Usage:
+    $0 dir1 dir2 dir2 -- command"
+
+# show help if requested
+if [ "x$1" == "x-h" -o "x$1" == "x-?" -o  "x$1" == "x--help" ]; then
+	echo "Execute command in each subdirectory of current directory."
+	echo "$USAGE"
+	exit 0
+fi
+
+# assert arguments supplied
+if [ "x$1" == "x"  ]; then
+	echo "foreach: no input, '$0 -h' for help"
+	echo "$USAGE"
+	exit 1
+fi
+
+# parse dirs
+DIRS=
+while [ "x$1" != "x"  ]; do
+	if [ "x$1" == "x--" ]; then
+		shift;
+		break;
+	fi
+	if [ "x$DIRS" != "x" -a "x$2" == "x" ]; then
+		break;
+	fi
+	DIR="$1"
+	# before starting commands check all folders exist
+	if pushd "$DIR" > /dev/null ; then
+		popd > /dev/null
+	else
+		echo "foreach: error entering $DIR, dry exiting"
+		exit 3
+	fi
+DIRS="$DIRS
+$DIR"
+	shift;
+done || exit $?
+
+# if [[ -z "$DIRS" ]]; then
+# 	if [[ -n "${FOREACH_DIRS:-}" ]]; then
+# 		echo "$0" $FOREACH_DIRS -- "$@"
+# 		exit $?
+# 	else
+# 		>&2 echo "no dirs sets"
+# 		exit 1
+# 	fi
+# 	exit $?
+# fi
+
+
+# assert command is set
+if [ "x$1" == "x"  ]; then
+	echo "foreach: no command, '$0 -h' for help"
+	echo "$USAGE"
+	exit 2
+fi
+
+export COMMAND="$*"
+echo "now ready to execute '$COMMAND' in subdirs"
+
+
+test -n "${CURRENT_BASE_NAME:-}" && export SET_CURRENT_BASE_NAME=false || export SET_CURRENT_BASE_NAME=true
+test -n "${CURRENT_FULL_NAME:-}" && export SET_CURRENT_FULL_NAME=false || export SET_CURRENT_FULL_NAME=true
+
+# execute commands
+echo "$DIRS" | while read DIR; do
+	if [ "x$DIR" != "x"  ]; then
+		if pushd "$DIR" > /dev/null ; then
+			echo "======== entering $DIR ========"
+			test true == ${SET_CURRENT_BASE_NAME} && export CURRENT_BASE_NAME=$(basename "$DIR")
+			test true == ${SET_CURRENT_FULL_NAME} && export CURRENT_FULL_NAME=$(realpath .)
+
+			if bash -c "$COMMAND" ; then
+				echo -n
+			else
+				echo "foreach: got result code $?, exiting"
+				exit 4
+			fi
+			popd > /dev/null
+			echo
+		else
+			echo "foreach: error entering $DIR, exiting"
+			exit 3
+		fi
+	fi
+done
+chmod ugo+x target/main/script/foreach
+mkdir -p target/main/script/
+data=$(sed -e 's|{{prefix}}|/home/user/.local|g; s|{{name}}|manuscripts|g; s|{{version}}|0.1.0-SNAPSHOT|g; s|{{owndatadir}}|/home/user/.local/share/manuscripts|g;' src/main/script/daemonize.vbs); echo "=================$data"; test -d src/main/include && find src/main/include -type f | while read file; do what="{{include:$file}}"; with=$(cat "src/main/include/$file"); data="${data//$what/$with}"; echo "=================$data"; done || true; echo -n -e "$data" > 'target/main/script/daemonize.vbs'
+=================
+
+if WScript.Arguments.Count>0 Then
+	AllArguments=""
+	For Each Arg in WScript.Arguments
+		AllArguments = AllArguments & """" & Arg & """ "
+	next
+
+	rem run process in background
+	Dim WinScriptHost
+	Set WinScriptHost = CreateObject("WScript.Shell")
+	WinScriptHost.Run AllArguments, 0
+	Set WinScriptHost = Nothing
+
+	WScript.Echo "daemonize.vbs: executed command: " & AllArguments
+else
+	WScript.Echo "daemonize.vbs: not enough arguments"
+end if
+chmod ugo+x target/main/script/daemonize.vbs
+mkdir -p target/main/script/
+data=$(sed -e 's|{{prefix}}|/home/user/.local|g; s|{{name}}|manuscripts|g; s|{{version}}|0.1.0-SNAPSHOT|g; s|{{owndatadir}}|/home/user/.local/share/manuscripts|g;' src/main/script/sub-foreach); echo "=================$data"; test -d src/main/include && find src/main/include -type f | while read file; do what="{{include:$file}}"; with=$(cat "src/main/include/$file"); data="${data//$what/$with}"; echo "=================$data"; done || true; echo -n -e "$data" > 'target/main/script/sub-foreach'
+=================#!/usr/bin/env bash
+
+
+JOBS=4
+
+#ps | grep " $OWNPID " | wc -l
+
+export COMMAND="$*"
+
+test -n "${CURRENT_BASE_NAME:-}" && export SET_CURRENT_BASE_NAME=false || export SET_CURRENT_BASE_NAME=true
+test -n "${CURRENT_FULL_NAME:-}" && export SET_CURRENT_FULL_NAME=false || export SET_CURRENT_FULL_NAME=true
+find . -maxdepth 1 -mindepth 1 -type d | while read DIR; do
+	if [ -e "$DIR/.git" ]; then
+		if pushd "$DIR" > /dev/null ; then
+			echo -n "    $(basename $DIR): "
+			test true == ${SET_CURRENT_BASE_NAME} && export CURRENT_BASE_NAME=$(basename "$DIR")
+			test true == ${SET_CURRENT_FULL_NAME} && export CURRENT_FULL_NAME=$(realpath "$DIR")
+			#COMMAND=$(echo "$COMMAND" | sed -e "s/{NAME}/$DIR/g;")
+
+			if eval "$COMMAND" ; then
+				echo -n
+			else
+				echo "foreach: got result code $?, exiting"
+				exit 4
+			fi
+			popd > /dev/null
+		else
+			echo "foreach: error entering $DIR, exiting"
+			exit 3
+		fi
+	fi
+done
+chmod ugo+x target/main/script/sub-foreach
+mkdir -p /home/user/.local/bin
+install --compare target/main/script/gitlab target/main/script/daemonize.cmd target/main/script/intellij-idea-trial-reset.cmd target/main/script/blade-runner target/main/script/kill-by-grep target/main/script/foreach target/main/script/daemonize.vbs target/main/script/sub-foreach /home/user/.local/bin
+mkdir -p target/main/share/
+data=$(sed -e 's|{{prefix}}|/home/user/.local|g; s|{{name}}|manuscripts|g; s|{{version}}|0.1.0-SNAPSHOT|g; s|{{owndatadir}}|/home/user/.local/share/manuscripts|g;' src/main/share/README); echo "=================$data"; test -d src/main/include && find src/main/include -type f | while read file; do what="{{include:$file}}"; with=$(cat "src/main/include/$file"); data="${data//$what/$with}"; echo "=================$data"; done || true; echo -n -e "$data" > 'target/main/share/README'
+=================manuscripts
+
+version:        0.1.0-SNAPSHOT
+install prefix: /home/user/.local
+data dir:       /home/user/.local/share/manuscripts
+mkdir -p '/home/user/.local/share/manuscripts'
+cp -rf target/main/share/. '/home/user/.local/share/manuscripts'
+echo '#!/usr/bin/env bash' > '/home/user/.local/share/manuscripts/uninstall'
+make --silent --dry-run uninstall >> '/home/user/.local/share/manuscripts/uninstall'
+chmod ugo+x '/home/user/.local/share/manuscripts/uninstall'
+mkdir -p /home/user/.local/share/manuscripts
+echo '#!/usr/bin/env bash' > '/home/user/.local/share/manuscripts/uninstall'
+make --silent --dry-run uninstall >> '/home/user/.local/share/manuscripts/uninstall'
+chmod ugo+x '/home/user/.local/share/manuscripts/uninstall'

@@ -1,0 +1,1103 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"cmd_source",
+				"cmd_source_names"
+			],
+			[
+				"bash_source",
+				"bash_source_names"
+			],
+			[
+				"S",
+				"STDERR_LOG"
+			],
+			[
+				"in",
+				"intellij-cmd"
+			],
+			[
+				"_out",
+				"_output_dir"
+			],
+			[
+				"_si",
+				"_sign_output_base"
+			],
+			[
+				"im",
+				"image_hash"
+			],
+			[
+				"assert-",
+				"assert-contains"
+			],
+			[
+				"A",
+				"ACBUILD_OPTS"
+			],
+			[
+				"parse",
+				"parse-label"
+			],
+			[
+				"w",
+				"weight"
+			],
+			[
+				"sub",
+				"Subst"
+			],
+			[
+				"subst_d",
+				"subst_datum"
+			],
+			[
+				"Hash",
+				"HashedConfinedQueue"
+			],
+			[
+				"with",
+				"with_capacity"
+			],
+			[
+				"from",
+				"from_utf8           Function (mod.rs) : pub fn from_utf8(v: &[u8]) -> Result<&str, Utf8Error> {               "
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "Makefile",
+			"settings":
+			{
+				"buffer_size": 3071,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "target/main/script/sub-foreach",
+			"settings":
+			{
+				"buffer_size": 910,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/main/resource/README",
+			"settings":
+			{
+				"buffer_size": 99,
+				"encoding": "UTF-8",
+				"line_ending": "Windows",
+				"name": "resou"
+			}
+		},
+		{
+			"file": "src/main/script/blade-runner",
+			"settings":
+			{
+				"buffer_size": 2005,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 38.0,
+		"last_filter": "make",
+		"selected_items":
+		[
+			[
+				"make",
+				"Set Syntax: Makefile Improved"
+			],
+			[
+				"makefil",
+				"Set Syntax: Makefile Improved"
+			],
+			[
+				"lower cas",
+				"Convert Case: Lower Case"
+			],
+			[
+				"lower",
+				"Convert Case: Lower Case"
+			],
+			[
+				"java",
+				"Set Syntax: Java"
+			],
+			[
+				"xml",
+				"Set Syntax: XML"
+			],
+			[
+				"html",
+				"Set Syntax: HTML"
+			],
+			[
+				"reindent",
+				"Indentation: Reindent Lines"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"indent",
+				"Auto indent"
+			],
+			[
+				"tag ",
+				"Code Folding: Fold Tag Attributes"
+			],
+			[
+				"auto",
+				"Auto indent"
+			],
+			[
+				"unique",
+				"Permute Lines: Unique"
+			],
+			[
+				"sort",
+				"Sort Lines"
+			],
+			[
+				"uniqu",
+				"Permute Lines: Unique"
+			],
+			[
+				"inden",
+				"Indent XML"
+			],
+			[
+				"tabs",
+				"Indentation: Convert to Tabs"
+			],
+			[
+				"spaces",
+				"Indentation: Convert to Spaces"
+			],
+			[
+				"inde",
+				"Indent XML"
+			],
+			[
+				"settings",
+				"Preferences: Settings"
+			],
+			[
+				"theme",
+				"UI: Select Theme"
+			],
+			[
+				"preferences ",
+				"Preferences: Settings"
+			],
+			[
+				"groov",
+				"Set Syntax: Groovy"
+			],
+			[
+				"ind",
+				"Indent XML"
+			],
+			[
+				"indent x",
+				"Indent XML"
+			],
+			[
+				"indent xm",
+				"Indent XML"
+			],
+			[
+				"sql",
+				"Set Syntax: SQL"
+			],
+			[
+				"snake ",
+				"Convert Case: SCREAMING_SNAKE_CASE"
+			],
+			[
+				"upper",
+				"Convert Case: Upper Case"
+			],
+			[
+				"json",
+				"JSON Reindent: reindent file or selection"
+			],
+			[
+				"bash",
+				"Set Syntax: Shell Script (Bash)"
+			],
+			[
+				"tab",
+				"Indentation: Convert to Tabs"
+			],
+			[
+				"sort line",
+				"Sort Lines"
+			],
+			[
+				"sort lin",
+				"Sort Lines"
+			],
+			[
+				"justi",
+				"CSV: Justify columns"
+			],
+			[
+				"set deli",
+				"CSV: Set delimiter"
+			],
+			[
+				"just",
+				"CSV: Justify columns"
+			],
+			[
+				"comp",
+				"CSV: Compact columns"
+			],
+			[
+				"deli",
+				"CSV: Set delimiter"
+			],
+			[
+				"justify col",
+				"CSV: Justify columns"
+			],
+			[
+				"compa",
+				"CSV: Compact columns"
+			],
+			[
+				"jus",
+				"CSV: Justify columns"
+			],
+			[
+				"coma",
+				"CSV: Compact columns"
+			],
+			[
+				"delimi",
+				"CSV: Set delimiter"
+			],
+			[
+				"justif",
+				"CSV: Justify columns"
+			],
+			[
+				"jsut",
+				"CSV: Justify columns"
+			],
+			[
+				"com",
+				"CSV: Compact columns"
+			],
+			[
+				"csv com",
+				"CSV: Compact columns"
+			],
+			[
+				"justify",
+				"CSV: Justify columns"
+			],
+			[
+				"csv deli",
+				"CSV: Set delimiter"
+			],
+			[
+				"shel",
+				"Set Syntax: Shell Script (Bash)"
+			],
+			[
+				"lowerc",
+				"Convert Case: Lower Case"
+			],
+			[
+				"reind",
+				"Indentation: Reindent Lines"
+			],
+			[
+				"syntax pla",
+				"Set Syntax: Plain Text"
+			],
+			[
+				"c++",
+				"Set Syntax: C++"
+			],
+			[
+				"set syntax xml",
+				"Set Syntax: XML"
+			],
+			[
+				"JAVA",
+				"Set Syntax: Java"
+			],
+			[
+				"UPPER",
+				"Convert Case: Upper Case"
+			],
+			[
+				"shell",
+				"Set Syntax: Shell Script (Bash)"
+			],
+			[
+				"beauti",
+				"SQL Beautifier: Format Current SQL File"
+			],
+			[
+				"new file",
+				"ANF: New File"
+			],
+			[
+				"sq",
+				"Set Syntax: PL/SQL (Oracle)"
+			],
+			[
+				"javasc",
+				"Set Syntax: JavaScript"
+			],
+			[
+				"match",
+				"Emmet: Go to Matching Pair"
+			],
+			[
+				"sql be",
+				"SQL Beautifier: Format Current SQL File"
+			],
+			[
+				"anf: new",
+				"ANF: New File"
+			],
+			[
+				"new",
+				"ANF: New File"
+			],
+			[
+				"anf",
+				"ANF: Rename File"
+			],
+			[
+				"new fol",
+				"File: New Folder Relative to Project Root"
+			],
+			[
+				"pl/s",
+				"Set Syntax: PL/SQL (Oracle)"
+			],
+			[
+				"gitignore",
+				"Set Syntax: Git Ignore"
+			],
+			[
+				"instal",
+				"Package Control: Install Package"
+			],
+			[
+				"install ",
+				"Package Control: Install Package"
+			],
+			[
+				"pl/sql",
+				"Set Syntax: PL/SQL (Oracle)"
+			],
+			[
+				"",
+				"ANF: New File"
+			],
+			[
+				"scala",
+				"Set Syntax: Scala"
+			],
+			[
+				"package control remo",
+				"Package Control: Remove Package"
+			],
+			[
+				"install pac",
+				"Package Control: Install Package"
+			],
+			[
+				"kill sbt",
+				"SBT: Kill SBT"
+			],
+			[
+				"start sbt",
+				"SBT: Start SBT"
+			],
+			[
+				"kill sb",
+				"SBT: Kill SBT"
+			],
+			[
+				"start sb",
+				"SBT: Start SBT"
+			],
+			[
+				"rename",
+				"File: Rename"
+			],
+			[
+				"copy",
+				"File: Copy Path"
+			],
+			[
+				"renam",
+				"File: Rename"
+			],
+			[
+				"pl/sq",
+				"Set Syntax: PL/SQL (Oracle)"
+			],
+			[
+				"remove pac",
+				"Package Control: Remove Package"
+			],
+			[
+				"package",
+				"Package Control: Remove Package"
+			],
+			[
+				"lua",
+				"Set Syntax: Lua"
+			],
+			[
+				"pl/",
+				"Set Syntax: PL/SQL (Oracle)"
+			],
+			[
+				"plsq",
+				"Set Syntax: PL/SQL (Oracle)"
+			],
+			[
+				"dupli",
+				"File: Duplicate"
+			],
+			[
+				"pls",
+				"Set Syntax: PL/SQL (Oracle)"
+			],
+			[
+				"pls/",
+				"Set Syntax: PL/SQL (Oracle)"
+			],
+			[
+				"rust",
+				"Set Syntax: Rust"
+			],
+			[
+				"text",
+				"Set Syntax: Textile"
+			],
+			[
+				"move",
+				"File: Move"
+			],
+			[
+				"rena",
+				"File: Rename"
+			],
+			[
+				"expan",
+				"Emmet: Expand Abbreviation"
+			],
+			[
+				"build",
+				"Build: Cancel"
+			],
+			[
+				"hg",
+				"SublimeHg: Open CLI"
+			],
+			[
+				"mercurial",
+				"Set Syntax: Mercurial Log"
+			],
+			[
+				"view",
+				"File: New View into File"
+			],
+			[
+				"removepa",
+				"Package Control: Remove Package"
+			],
+			[
+				"delete",
+				"File: Delete"
+			],
+			[
+				"de",
+				"ANF: Delete File"
+			],
+			[
+				"sidebar",
+				"View: Toggle Open Files in Side Bar"
+			]
+		],
+		"width": 444.0
+	},
+	"console":
+	{
+		"height": 126.0,
+		"history":
+		[
+			"import urllib.request,os,hashlib; h = '2915d1851351e5ee549c20394736b442' + '8bc59f460fa1548d1514676163dafc88'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/C/Users/a.legeyda/other/Dropbox/workspace/manuscripts",
+		"/C/Users/a.legeyda/other/Dropbox/workspace/manuscripts/src",
+		"/C/Users/a.legeyda/other/Dropbox/workspace/manuscripts/src/main",
+		"/C/Users/a.legeyda/other/Dropbox/workspace/manuscripts/src/main/script",
+		"/C/Users/a.legeyda/other/Dropbox/workspace/manuscripts/src/make",
+		"/C/Users/a.legeyda/other/Dropbox/workspace/manuscripts/src/make/script",
+		"/C/Users/a.legeyda/other/Dropbox/workspace/manuscripts/target",
+		"/C/Users/a.legeyda/other/Dropbox/workspace/manuscripts/target/main",
+		"/C/Users/a.legeyda/other/Dropbox/workspace/manuscripts/target/main/resource",
+		"/C/Users/a.legeyda/other/Dropbox/workspace/manuscripts/target/main/script"
+	],
+	"file_history":
+	[
+		"/C/Users/a.legeyda/Dropbox/workspace/manuscripts/src/make/script/process-includes",
+		"/C/Users/a.legeyda/checkout/ibank_root/ibank_root.iws",
+		"/C/Users/a.legeyda/Dropbox/workspace/manuscripts/Makefile",
+		"/C/Users/a.legeyda/Dropbox/workspace/manuscripts/.gitignore",
+		"/C/Users/a.legeyda/Dropbox/workspace/manuscripts/target/script/blade-runner",
+		"/C/Users/a.legeyda/workspace/scripts/src/main/script/ibank-compile",
+		"/C/Users/a.legeyda/install/cygwin-2.876/usr/local/bin/ibank-compile",
+		"/C/Users/a.legeyda/checkout/ibank_root/ibank_root.ipr",
+		"/C/Users/a.legeyda/bin/proliv.cmd",
+		"/C/Users/a.legeyda/checkout/ibank_root/.ibank-up.rc",
+		"/C/Users/a.legeyda/workspace/scripts/src/main/script/ibank-update",
+		"/C/Users/a.legeyda/Dropbox/workspace/manuscripts/VERSION",
+		"/C/Users/a.legeyda/checkout/ibank_root/ibank_root.iml",
+		"/C/Users/a.legeyda/checkout/ibank_root_15/ibank_root_15.iws",
+		"/C/Users/a.legeyda/checkout/ibank_root_15/.ibank-up.rc",
+		"/C/Users/a.legeyda/install/cygwin-2.876/usr/local/share/manuscript/uninstall",
+		"/C/Users/a.legeyda/Dropbox/workspace/scripts/Makefile2",
+		"/C/Users/a.legeyda/Dropbox/workspace/scripts/src/intellij-idea-trial-reset.cmd",
+		"/C/Users/a.legeyda/Dropbox/workspace/scripts/Makescript",
+		"/C/Users/a.legeyda/case/IS-9991/iSimple.log.txt",
+		"/C/Users/a.legeyda/Dropbox/workspace/scripts/src/blade-runner.sh",
+		"/C/Users/a.legeyda/Dropbox/workspace/scripts/src/daemonize.vbs",
+		"/C/Users/a.legeyda/Dropbox/workspace/scripts/src/foreach.sh",
+		"/C/Users/a.legeyda/Dropbox/workspace/scripts/src/daemonize.cmd",
+		"/C/Users/a.legeyda/Dropbox/workspace/scripts/.gitignore",
+		"/C/Users/a.legeyda/Dropbox/workspace/scripts/Makefile",
+		"/C/Users/a.legeyda/Dropbox/workspace/scripts/src/test.cmd",
+		"/C/Users/a.legeyda/Dropbox/workspace/scripts/src/foreach",
+		"/C/Users/a.legeyda/Dropbox/workspace/webapp-runner/webapp-run",
+		"/C/Users/a.legeyda/case/IS-9123/ABSInterface.xsd",
+		"/C/Users/a.legeyda/workspace/scripts/Makefile",
+		"/C/Users/a.legeyda/workspace/scripts/src/daemonize.cmd",
+		"/C/Users/a.legeyda/workspace/scripts/src/daemonize.vba",
+		"/C/Users/a.legeyda/other/temp/ans.html",
+		"/C/Users/a.legeyda/bin/test-daemon.cmd",
+		"/C/Users/a.legeyda/workspace/scripts/src/run-job.sh",
+		"/C/Users/a.legeyda/workspace/scripts/src/job-daemon.sh",
+		"/C/Users/a.legeyda/workspace/scripts/src/daily-job.sh",
+		"/C/Users/a.legeyda/workspace/scripts/src/weekly-job.sh",
+		"/C/Users/a.legeyda/workspace/scripts/src/test.cmd",
+		"/C/Users/a.legeyda/bin/test.cmd",
+		"/C/Users/a.legeyda/workspace/mock-jasper/pom.xml",
+		"/C/Users/a.legeyda/checkout/ibank_root/custcore/build.gradle",
+		"/C/Users/a.legeyda/AppData/Local/Temp/_dc459477223/rest_report.jrxml",
+		"/C/Users/a.legeyda/case/IS-7833 rest turnover/turnover_report-orig.jrxml",
+		"/C/Users/a.legeyda/Downloads/ABSInterface.xsd",
+		"/C/Users/a.legeyda/temp/backup_stable_minb_10_08_17.backup",
+		"/C/Users/a.legeyda/case/IS-7833 rest turnover/по-старому/about.txt",
+		"/C/Users/a.legeyda/Dropbox/workspace/scripts/src/tst.sh",
+		"/C/Users/a.legeyda/Dropbox/books/Churchill, W.  The Second World War, Vol. 1.html",
+		"/C/Users/a.legeyda/case/IS-6798 не приходят уведомления sms/NotifyConnector.log",
+		"/C/Users/a.legeyda/other/temp/Льюис М.  Бумеранг. Как из развитой страны превратиться в страну третьего мира. - Альпина, 2016.fb2",
+		"/C/Users/a.legeyda/checkout/ibank_root_15/cust-ibank-fl/src/rebel.xml",
+		"/C/Users/a.legeyda/bin/rebel.xml.template",
+		"/C/Users/a.legeyda/bin/Проверка БИКа банка счета списания на существование в справочнике",
+		"/C/Users/a.legeyda/install/tomcat-8.5/bin/hs_err_pid12268.log",
+		"/C/Users/a.legeyda/AppData/Local/Temp/_dc219241017/client_limits_ru.xml",
+		"/C/Users/a.legeyda/case/IS-8836/double-zkau/request-1.txt",
+		"/C/Users/a.legeyda/case/IS-8836/double-zkau/request-2.txt",
+		"/C/Users/a.legeyda/case/IS-8836/double-zkau/response-1.txt",
+		"/C/Users/a.legeyda/case/IS-8836/double-zkau/response-2.txt",
+		"/C/Users/a.legeyda/bin/ibank-run",
+		"/C/Users/a.legeyda/notes.txt",
+		"/C/Users/a.legeyda/checkout/ibank_root_15/cust-ibank-ul-minb/src/web/cust-ibank-ul-minb/css/minb.css.dsp",
+		"/C/Users/a.legeyda/.gitignore_global",
+		"/C/Users/a.legeyda/bin/rebel.xml.template.xml",
+		"/C/Users/a.legeyda/case/IS-8836/empty-rows.txt",
+		"/C/Users/a.legeyda/AppData/Roaming/doublecmd/doublecmd.xml",
+		"/C/Users/a.legeyda/case/IS-8836/index.html",
+		"/C/Users/a.legeyda/other/temp/Штикельмайер_К_Откровения_немецкого_истребителя_танков._Танковый_стрелок.fb2",
+		"/C/Users/a.legeyda/bin/ibank-update",
+		"/C/Users/a.legeyda/case/IS-8049/finstream.wsdl",
+		"/C/Users/a.legeyda/case/IS-8049/EXPORT.response_plus_regexp.xml",
+		"/C/Users/a.legeyda/Dropbox/workspace/parser/pom.xml",
+		"/C/Users/a.legeyda/Dropbox/workspace/parser/src/main/java/Expression.java",
+		"/C/Users/a.legeyda/Downloads/iSimple1.csv",
+		"/C/Users/a.legeyda/case/IS-8625/query.csv",
+		"/C/Users/a.legeyda/AppData/Local/Packages/Microsoft.SkypeApp_kzf8qxf38zg5c/LocalState/Downloads/УИН — копия.txt",
+		"/C/Users/a.legeyda/checkout/ibank_root/cust-ibank-fl-core/src/test/custsystems/ibankfl/docflow/operations/checkLimit/CheckProductLimitOperationTest.java",
+		"/C/Users/a.legeyda/checkout/ibank_root/cust-ibank-fl/src/WEB-INF/metadata/config/factory/factory.xml",
+		"/C/Users/a.legeyda/bin/proliv",
+		"/C/Users/a.legeyda/AppData/Local/Packages/Microsoft.SkypeApp_kzf8qxf38zg5c/LocalState/Downloads/УИН.txt",
+		"/C/Users/a.legeyda/checkout/ibank_root_15/.git/modules/custcore/refs/heads/IS-6702-fix",
+		"/C/Users/a.legeyda/checkout/ibank_root/cust-ibank-fl-rosevro/src/WEB-INF/metadata/localize/system/limit/limit_ru.xml",
+		"/C/Users/a.legeyda/Dropbox/temp/job.spec",
+		"/C/Users/a.legeyda/case/IS-8192/notes.txt",
+		"/C/Users/a.legeyda/case/IS-6742/transition.txt",
+		"/C/Users/a.legeyda/checkout/ibank_root/cust-ibank-fl-core/src/com/custsystems/ibankfl/docflow/operations/AbstractCheckProductLimitOperation.java",
+		"/C/Users/a.legeyda/case/IS-7049/notes.txt",
+		"/C/Users/a.legeyda/bin/foreach",
+		"/C/Users/a.legeyda/case/IS-7049/bsr.xml",
+		"/C/Users/a.legeyda/AppData/Local/Packages/Microsoft.SkypeApp_kzf8qxf38zg5c/LocalState/Downloads/spring_datasources (3).xml",
+		"/C/Users/a.legeyda/AppData/Local/Packages/Microsoft.SkypeApp_kzf8qxf38zg5c/LocalState/Downloads/new 4.txt",
+		"/C/Users/a.legeyda/case/IS-7735/sql.sql",
+		"/C/Users/a.legeyda/case/IS-7735/readme.txt",
+		"/C/Users/a.legeyda/AppData/Local/Packages/Microsoft.SkypeApp_kzf8qxf38zg5c/LocalState/Downloads/all.log",
+		"/C/Users/a.legeyda/AppData/Local/Packages/Microsoft.SkypeApp_kzf8qxf38zg5c/LocalState/Downloads/all (2).log",
+		"/C/Users/a.legeyda/AppData/Local/Packages/Microsoft.SkypeApp_kzf8qxf38zg5c/LocalState/Downloads/all (3).log",
+		"/C/Users/a.legeyda/checkout/jms_remote_root_15/cust-jms-remote/.gitignore",
+		"/C/Users/a.legeyda/case/IS-7049/инструкция.txt",
+		"/C/Users/a.legeyda/Downloads/creditRepayment.xml",
+		"/C/Users/a.legeyda/case/IS-7102/notes.txt",
+		"/C/Users/a.legeyda/checkout/jms-remote-root/.ibank-update.rc",
+		"/C/Users/a.legeyda/case/IS-7735/ibank.h2.db.readme",
+		"/C/Users/a.legeyda/checkout/ibank_root/custcore/src/com/custsystems/custerp/binding/contols/ControlLevel.java",
+		"/C/Users/a.legeyda/bin/intellij-idea-trial-reset.cmd",
+		"/C/Users/a.legeyda/AppData/Local/Packages/Microsoft.SkypeApp_kzf8qxf38zg5c/LocalState/Downloads/log4j2.xml",
+		"/C/Users/a.legeyda/case/IS-7049/snippent.java",
+		"/C/Users/a.legeyda/checkout/jms_remote_root_15/cust-jms-remote/src/main/resources/abs/abs_branch_config.xml",
+		"/C/Users/a.legeyda/checkout/jms_remote_root_15/cust-jms-remote/src/main/resources/app.properties",
+		"/C/Users/a.legeyda/temp/удалить 10 чисел",
+		"/C/Users/a.legeyda/temp/remless10.py",
+		"/C/Users/a.legeyda/case/IS-7500/fiels",
+		"/C/Users/a.legeyda/case/IS-6330/legeyda-platpor-2017-06-29.csv.csv",
+		"/C/Users/a.legeyda/checkout/ibank_root_15/cust_ws_core/src/com/custsystems/web/service/core/rest/provider/JAXBContextResolver.java",
+		"/C/Users/a.legeyda/checkout/ibank_root_15/cust-ibank-ul-minb/src/com/custsystems/integration/abs/connector/jms/handler/SendSmsNotifyHandler.java",
+		"/C/Users/a.legeyda/AppData/Local/Temp/_dc1677625909/JAXBContextResolver.class",
+		"/C/Users/a.legeyda/checkout/ibank_root_15/cust_ws_core/src/com/custsystems/web/service/core/rest/provider/JSONUnmarshallValidationHandler.java",
+		"/C/Users/a.legeyda/.IntelliJIdea2017.1/config/options/options.xml",
+		"/C/Users/a.legeyda/Dropbox/workspace/acbuild-template/acbuild-template",
+		"/C/Users/a.legeyda/Dropbox/workspace/acbuild-template/test/mock-command",
+		"/C/Users/a.legeyda/Dropbox/workspace/centos7-dev-aci/acbuild-script",
+		"/C/Users/a.legeyda/checkout/ibank_root/cust-ibank-fl-fora/stends/fora/sql/perform.lst",
+		"/C/Users/a.legeyda/checkout/ibank_root/cust-ibank-fl-fora/src/WEB-INF/metadata/dictionary/ibankfl/setup/docclass/docclass_data.xml",
+		"/C/Users/a.legeyda/Dropbox/workspace/legeyda.com/src/rkt-images.html",
+		"/C/Users/a.legeyda/Dropbox/workspace/legeyda.com/Makefile",
+		"/C/Users/a.legeyda/Dropbox/workspace/legeyda.com/src/style.css",
+		"/C/Users/a.legeyda/Downloads/GPG_Suite-2016.10_v2.dmg.sig"
+	],
+	"find":
+	{
+		"height": 28.0
+	},
+	"find_in_files":
+	{
+		"height": 111.0,
+		"where_history":
+		[
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"tee",
+			".war",
+			"ROOT",
+			"ROOT.war",
+			"ROOT",
+			"ibank_root_master",
+			"8080",
+			"tomcat",
+			"ROOT.war",
+			"bash",
+			"target",
+			"cmd",
+			"sync",
+			".sh",
+			"bash",
+			"isim",
+			"simple",
+			"scripts",
+			"log_name",
+			"blade-runner"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 1,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "Makefile",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3071,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								16,
+								16
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Makefile Improved/Makefile Improved.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 900.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "target/main/script/sub-foreach",
+					"semi_transient": true,
+					"settings":
+					{
+						"buffer_size": 910,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/ShellScript/Shell-Unix-Generic.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "src/main/resource/README",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 99,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								99,
+								99
+							]
+						],
+						"settings":
+						{
+							"auto_name": "resou",
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "src/main/script/blade-runner",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2005,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1002,
+								1002
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/ShellScript/Shell-Unix-Generic.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 540.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 28.0
+	},
+	"input":
+	{
+		"height": 45.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"output.sbt":
+	{
+		"height": 0.0
+	},
+	"output.sbt_error":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "test run ssubst",
+	"project": "scripts.sublime-project",
+	"replace":
+	{
+		"height": 52.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"weekly-job",
+				"C:\\Users\\a.legeyda\\workspace\\scripts\\src\\weekly-job.sh"
+			],
+			[
+				"daily-job",
+				"C:\\Users\\a.legeyda\\workspace\\scripts\\src\\daily-job.sh"
+			],
+			[
+				"mainrs",
+				"src/main.rs"
+			],
+			[
+				"server.rs",
+				"src/server.rs"
+			],
+			[
+				"main",
+				"src/main.rs"
+			],
+			[
+				"makef",
+				"Makefile"
+			],
+			[
+				"ce.s",
+				"ce.sql"
+			],
+			[
+				"subscription",
+				"rssp\\view\\subscription\\Subscription.js"
+			],
+			[
+				"stion",
+				"rssp\\view\\subscription\\Subscription.js"
+			],
+			[
+				"confi",
+				"config.xml"
+			],
+			[
+				"boot.js",
+				"app\\boot.js"
+			],
+			[
+				"",
+				"C:\\Users\\ALegeida\\package.json"
+			],
+			[
+				".ig",
+				".gitignore"
+			],
+			[
+				"proj",
+				"2015-12-15 сравнение декабрьских кампаний.sublime-project"
+			],
+			[
+				"note",
+				"notes.txt"
+			],
+			[
+				"plugins.",
+				"project\\plugins.sbt"
+			],
+			[
+				"index.c",
+				"app\\views\\index.scala.html"
+			],
+			[
+				"build.s",
+				"build.sbt"
+			],
+			[
+				"html",
+				"v_storm_camps camp_id=87146.html"
+			],
+			[
+				"cbm-19",
+				"CBM-19079.txt"
+			],
+			[
+				"notes",
+				"notes.txt"
+			],
+			[
+				"c",
+				"CBM-15039.txt"
+			],
+			[
+				"cargo",
+				"Cargo.toml"
+			],
+			[
+				"ssu",
+				"ssubst.sublime-project"
+			],
+			[
+				"ss",
+				"ssubst.sublime-project"
+			],
+			[
+				"li",
+				"src\\lib.rs"
+			],
+			[
+				"sublime",
+				"ssubst.sublime-project"
+			],
+			[
+				"ssub",
+				"ssubst.sublime-project"
+			],
+			[
+				"main.rs",
+				"src/main.rs"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"",
+				"~/Dropbox/workspace/volleymarkt/volleymarkt.sublime-project"
+			],
+			[
+				"rustc19",
+				"C:\\las\\Dropbox\\workspace\\rustc19-aci\\rustc19.sublime-project"
+			]
+		],
+		"width": 380.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 309.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

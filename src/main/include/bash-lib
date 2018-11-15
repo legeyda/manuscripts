@@ -1,0 +1,15 @@
+
+# fun: errcho some message text
+# txt: print message to stderr
+errcho() {
+	(>&2 echo "$@")
+}
+
+# fun: errxit 1 error message
+# txt: print error message and exits with given errcode
+errxit() {
+	local retcode="${1:-1}"
+	shift
+	errcho "$@"
+	exit "$retcode"
+}

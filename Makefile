@@ -1,7 +1,7 @@
 name:=manuscripts
 version=$(shell cat VERSION)
 
-SHELL=/bin/sh
+SHELL=/bin/bash
 DESTDIR?=
 
 prefix?=/usr/local
@@ -52,32 +52,38 @@ install-uninstaller:
 
 ######## include ########
 
-include_main_include_dir=${source_dir}/main/include
+include_main_source_dir=${source_dir}/main/include
+include_main_source_names=$(shell find ${include_main_source_dir} -type f -printf '%P ')
 
 
-# fun: $(call process_includes,<input file>,<outout file>)
+# fun: $(call process_includes,<input file>,<output file>)
 # txt: reads input file, replaces all placeholders and saves to output file
 #      handles binary files, but is somewhat slower
 define process_includes_on_disk
+	set -e; \
 	sed -e 's|{{prefix}}|${prefix}|g; s|{{name}}|${name}|g; s|{{version}}|${version}|g; s|{{owndatadir}}|${owndatadir}|g;' '$(1)' > '$(2)'; \
-	test -d ${include_main_include_dir} && find ${include_main_include_dir} -type f | while read file; do \
+	test -d ${include_main_source_dir} && find ${include_main_source_dir} -type f -printf '%P\n' | while read file; do \
 		what="{{include:$$file}}"; \
-		with=$$(cat "src/main/include/$$file"); \
-		sed -i.back -e 's|$$what|$$with|g' '$(2)'; \
+		with=$$(cat "${include_main_source_dir}/$$file" | sed -e 's|&|\\\\&|g;'); \
+		awk -i inplace -v "what=$$what" -v "with=$$with" '{gsub(what, with); print}' '$(2)'; \
 	done || true
 endef
 
-# fun: $(call process_includes,<input file>,<outout file>)
+# fun: 
+define process_include_file
+	what="{{include:$(1)}}"; \
+	with=$$(cat "${include_main_source_dir}/$(1)" | sed -e 's|&|\\\\&|g;' ); \
+	data=$$(echo "$$data" | awk -v "what=$$what" -v "with=$$with" '{gsub(what, with); print}')
+endef
+
+# fun: $(call process_includes,<input file>,<output file>)
 # txt: reads input file, replaces all placeholders and saves to output file
 #      seems to be faster, but corrupts binary files
 define process_includes_in_memory
+	set -e; \
 	data=$$(sed -e 's|{{prefix}}|${prefix}|g; s|{{name}}|${name}|g; s|{{version}}|${version}|g; s|{{owndatadir}}|${owndatadir}|g;' $(1)); \
-	test -d ${include_main_include_dir} && find ${include_main_include_dir} -type f | while read file; do \
-		what="{{include:$$file}}"; \
-		with=$$(cat "src/main/include/$$file"); \
-		data="$${data//$$what/$$with}"; \
-	done || true; \
-	echo -n -e "$$data" > '$(2)'
+	$(foreach name,${include_main_source_names},$(call process_include_file,${name})); \
+	echo "$$data" > '$(2)'
 endef
 
 # we do not have binary files now, so use faster option
@@ -123,8 +129,8 @@ script_test_source_dir=${source_dir}/test/script
 script_test_source_names=$(shell find ${script_test_source_dir} -type f -printf '%P ')
 script_test_target_dir=${target_dir}/test/script
 
-.PHONY: script-check-install
-script-check-install:
+.PHONY: script-check-fake-install
+script-check-fake-install:
 	$(MAKE) DESTDIR=$(abspath ${target_dir}/script-check-prefix) script-install share-install
 
 ${script_test_target_dir}/%: ${script_test_source_dir}/%
@@ -133,7 +139,7 @@ ${script_test_target_dir}/%: ${script_test_source_dir}/%
 	chmod ugo+x $@
 
 .PHONY: script-check-%
-script-check-%: ${script_test_target_dir}/% script-check-install 
+script-check-%: ${script_test_target_dir}/% script-check-fake-install 
 	PATH=${target_dir}/script-check-prefix/${bindir}:$$PATH bash $<
 
 .PHONY: script-check
