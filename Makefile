@@ -82,7 +82,7 @@ endef
 define process_includes_in_memory
 	set -e; \
 	data=$$(sed -e 's|{{prefix}}|${prefix}|g; s|{{name}}|${name}|g; s|{{version}}|${version}|g; s|{{owndatadir}}|${owndatadir}|g;' $(1)); \
-	$(foreach name,${include_main_source_names},$(call process_include_file,${name}))
+	$(foreach name,${include_main_source_names},$(call process_include_file,${name})) \
 	echo "$$data" > '$(2)'
 endef
 
