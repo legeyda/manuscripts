@@ -1,4 +1,4 @@
-name:=manuscripts
+name:=$(shell basename $$(pwd))
 version=$(shell cat VERSION)
 
 SHELL=/bin/bash
@@ -53,7 +53,7 @@ install-uninstaller:
 ######## include ########
 
 include_main_source_dir=${source_dir}/main/include
-include_main_source_names=$(shell find ${include_main_source_dir} -type f -printf '%P ')
+include_main_source_names=$(shell test -d ${include_main_source_dir} && find ${include_main_source_dir} -type f -printf '%P ')
 
 
 # fun: $(call process_includes,<input file>,<output file>)
@@ -73,7 +73,7 @@ endef
 define process_include_file
 	what="{{include:$(1)}}"; \
 	with=$$(cat "${include_main_source_dir}/$(1)" | sed -e 's|&|\\\\&|g;' ); \
-	data=$$(echo "$$data" | awk -v "what=$$what" -v "with=$$with" '{gsub(what, with); print}')
+	data=$$(echo "$$data" | awk -v "what=$$what" -v "with=$$with" '{gsub(what, with); print}');
 endef
 
 # fun: $(call process_includes,<input file>,<output file>)
@@ -82,7 +82,7 @@ endef
 define process_includes_in_memory
 	set -e; \
 	data=$$(sed -e 's|{{prefix}}|${prefix}|g; s|{{name}}|${name}|g; s|{{version}}|${version}|g; s|{{owndatadir}}|${owndatadir}|g;' $(1)); \
-	$(foreach name,${include_main_source_names},$(call process_include_file,${name})); \
+	$(foreach name,${include_main_source_names},$(call process_include_file,${name}))
 	echo "$$data" > '$(2)'
 endef
 
@@ -95,7 +95,7 @@ endef
 ######## script-main ########
 
 script_main_source_dir=${source_dir}/main/script
-script_main_source_names=$(shell find ${script_main_source_dir} -type f -printf '%P ')
+script_main_source_names=$(shell test -d ${script_main_source_dir} && find ${script_main_source_dir} -type f -printf '%P ')
 script_main_target_dir=${target_dir}/main/script
 script_main_target_files=$(addprefix ${script_main_target_dir}/,${script_main_source_names})
 
@@ -126,7 +126,7 @@ script-clean:
 ######## script-test ########
 
 script_test_source_dir=${source_dir}/test/script
-script_test_source_names=$(shell find ${script_test_source_dir} -type f -printf '%P ')
+script_test_source_names=$(shell test -d ${script_test_source_dir} && find ${script_test_source_dir} -type f -printf '%P ')
 script_test_target_dir=${target_dir}/test/script
 
 .PHONY: script-check-fake-install
@@ -155,7 +155,7 @@ script-check-clean:
 ######## share ########
 
 share_main_source_dir=${source_dir}/main/share
-share_main_source_names=$(shell find ${share_main_source_dir} -type f -printf '%P ')
+share_main_source_names=$(shell test -d ${share_main_source_dir} && find ${share_main_source_dir} -type f -printf '%P ')
 share_main_target_dir=${target_dir}/main/share
 
 ${share_main_target_dir}/%: ${share_main_source_dir}/%
