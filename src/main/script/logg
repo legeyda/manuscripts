@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+set -eu
 mkdir -p ~/.local/var/log/logg
 
 echo >>  ~/.local/var/log/logg/stdout.txt 

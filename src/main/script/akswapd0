@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# to fix kswapd0 freezing issue (https://blog.voina.org/a-solution-for-kswapd0-going-haywire-on-linux/):
+# Edit /etc/sysctl.conf to make the change permanent
+# vm.swappiness = 0
+# sysctl -p
+# Reload the configuration file to apply the settings without a reboot:
+# sysctl -p
+
+set -eu
+while true; do
+	cpu=`ps -eo cmd,pcpu | grep -v grep | grep kswapd0 | awk '{print int($2)}'`
+	if [ "$cpu" -gt 50 ]; then
+		echo "kswapd cpu usage is $cpu, dropping caches"
+		echo 1 > /proc/sys/vm/drop_caches
+	fi
+	sleep 5
+done

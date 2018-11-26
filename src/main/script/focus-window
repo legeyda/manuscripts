@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -e
+set -eu
 
 print-usage() {
 	echo "Focus window by its title substring
@@ -25,20 +25,20 @@ Options:
 
 
 #env: title 
-#     command
+#     command?
 focus() {
 	local found_titles=$(wmctrl -l | grep "$title" | awk '{$1=$2=$3=""; print substr($0, 4)}')
-	if [ -n "$found_titles" ]; then
+	if [ -n "${found_titles:-}" ]; then
 		# todo: iterate over windows or not?
 		found_title=$(echo "$found_titles" | sed '1q;d')
 	fi
 
-	if [ -n "$found_title" ]; then
+	if [ -n "${found_titles:-}" ]; then
 		echo "window:$found_title"
 		wmctrl -R "$found_title"
 		sleep 0.2
 		wmctrl -R "$found_title"
-	elif [ -n "$command" ]; then
+	elif [ -n "${command:-}" ]; then
 		echo "command:$command"
 		bash -c "$command"
 	fi
@@ -75,7 +75,8 @@ main() {
 		fi
 	done
 
-	title=$title command=$command focus
+	title=$title command=${command:-} focus
+
 
 }
 
