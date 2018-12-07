@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+
+set -eu
+
+main() {
+	
+	if [ -z "${NOTE_DIR:-}" ]; then
+		if [ -d "$HOME/notes" ]; then
+			NOTE_DIR="$HOME/notes"
+		elif [ -d "$HOME/Dropbox/notes" ]; then
+			NOTE_DIR="$HOME/Dropbox/notes"
+		else
+			NOTE_DIR="$HOME"
+		fi
+	fi
+
+	# if [ -z "${EDITOR:-}" ]; then
+		
+	# fi
+
+
+	local title="$@"
+	if [ -z "$title" ]; then
+		if tty -s; then
+			echo 'input title'
+			read title
+		else
+			# exit script if cancel
+			title=`zenity --entry --text 'note title' --title nnote`
+		fi		
+	fi
+
+	if [ -n "$title" ]; then
+		local today=`date +%Y-%m-%d`
+		${EDITOR:-vi} "$NOTE_DIR/$today $title${NOTE_EXT:-.txt}"
+	else
+		echo empty title
+	fi
+
+}
+
+main "$@"

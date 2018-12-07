@@ -13,3 +13,15 @@ errxit() {
 	errcho "$@"
 	exit "$retcode"
 }
+
+external-tool() {
+	local tool="$1"
+	shift
+	if which "$tool" > /dev/null; then
+		"$tool" "$@"
+		return $?
+	else
+		errcho "required program $tool was not found, you should install it"
+		return 1
+	fi
+}
