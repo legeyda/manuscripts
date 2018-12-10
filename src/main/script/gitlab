@@ -73,16 +73,23 @@ make-get-request() {
 get-pageable-list() {
 	local url=$1
 	local jquery=${2:-}
-	local page=1
+	local page=0
 	if [ -n "${params:-}" ]; then
 		local query_suffix="&$params"
 	else
 		local query_suffix=''
 	fi
 	while true; do
+		# check if max_pages is reached
+		page=$[page+1]
+		if [ "$page" -gt "${max_pages:-999999}" ]; then
+			break
+		fi
+
 		local output
 		output=$(make-get-request "$url?statistics=true&per_page=${page_size:-100}&page=$page$query_suffix") || return $?
 
+		# check if should break (either error or eof)
 		if [ '{"message":"401 Unauthorized"}' == "$output" ]; then
 			errcho Unauthorized
 			return 1
@@ -90,11 +97,8 @@ get-pageable-list() {
 		if [[ '[]' == "$output" ]]; then
 			break;
 		fi
+
 		external-tool jq -Mr ".[]$jquery" <<< "$output" || return $?
-		page=$[page+1]
-		if [ "$page" -ge "${max_pages:-999999}" ]; then
-			break
-		fi
 	done
 }
 
@@ -170,20 +174,23 @@ clone() {
 groups() {	
 	
 	# check pattern
-	if [ "${1:-}" == '-' -o -z "${1:-}" ]; then
+	if [ "${1:-}" == '-' ]; then
 		local params=
-		local search_term=-
+		local not_found_message='no groups found (without filter)'
 		shift
-	elif [ -n "${1:-}" ]; then
+	elif [ -z "${1:-}" ]; then
+		local params=
+		local not_found_message='no groups found (without filter)'
+	else
 		local params="search=$1"
-		local search_term=$1
+		local not_found_message="no groups found by search term '$1'"
 		shift
 	fi
 
 	local found_groups
 	found_groups=$(params="$params" get-pageable-list groups .full_path) || return $?
 	if [ -z "$found_groups" ]; then
-		errcho "no groups found by search term $1"
+		errcho "$not_found_message"
 		return 2
 	fi
 
@@ -211,26 +218,35 @@ groups() {
 #      base_url
 group() {
 	# check pattern
-	if [ "${1:-}" == '-' -o -z "${1:-}" ]; then
+	if [ "${1:-}" == '-' ]; then
 		local params=
-		local search_term=-
-		shift
-	elif [ -n "${1:-}" ]; then
+		local not_found_message='no groups found (without filter)'
+		local ambiguous_message='ambiguous groups (without filter)'
+	elif [ -z "${1:-}" ]; then
+		local params=
+		local not_found_message='no groups found (without filter)'
+		local ambiguous_message='ambiguous groups (without filter)'
+	else
 		local params="search=$1"
-		local search_term=$1
+		local not_found_message="no groups found by search term '$1'"
+		local ambiguous_message="ambiguous groups by search term '$1'"
 		shift
 	fi
+
+
+
 
 	local found_group
 	found_group=$(params="$params" max_pages=2 page_size=2 get-pageable-list groups .full_path) || return $?
 	if [ -z "$found_group" ]; then
-		errcho "no groups found by search term ${1:-}"
+		errcho "$not_found_message"
 		return 2
 	fi
 
 	if [ "$(wc --lines <<< $found_group)" -gt 1 ]; then
-		errcho "ambigious groups by search term ${1:-} (two or more groups):
-$found_group"
+		errcho "$ambiguous_message:
+$found_group
+(may be more...)"
 		return 3
 	fi
 
@@ -277,7 +293,7 @@ projects() {
 			found_projects="$found_projects$(params=$params get-pageable-list groups/$full_path/projects .path_with_namespace)" || return $?
 		done <<< "$groups"
 	else
-		found_projects=$(params="$params" max_pages=2 page_size=2 get-pageable-list projects .path_with_namespace)
+		found_projects=$(params="$params" get-pageable-list projects .path_with_namespace)
 	fi
 
 	# check any found
@@ -366,7 +382,8 @@ project() {
 	# check only one found
 	if [[ "$(wc --lines <<< $found_project)" -gt 1 ]]; then
 		errcho "$ambiguous_projects:
-$found_project"
+$found_project
+(may be more...)"
 		return 3
 	fi
 
