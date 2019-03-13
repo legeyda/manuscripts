@@ -21,7 +21,7 @@ external-tool() {
 		"$tool" "$@"
 		return $?
 	else
-		errcho "required program $tool was not found, you should install it"
+		errcho "required program $tool was not found"
 		return 1
 	fi
 }

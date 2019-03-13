@@ -1,6 +1,14 @@
 name:=$(shell basename $$(pwd))
 version=$(shell cat VERSION)
 
+
+
+
+
+
+
+######## standard variables ########
+
 SHELL=/bin/bash
 DESTDIR?=
 
@@ -16,6 +24,15 @@ target_dir=target
 
 uninstall_script=${DESTDIR}${owndatadir}/uninstall
 
+
+
+
+
+
+
+
+######## standard targets ########
+
 .PHONY: all
 all: script-all share-all
 
@@ -29,22 +46,44 @@ clean: script-clean script-check-clean share-clean
 ${target_dir}: 
 	mkdir -p $@
 
-
 .PHONY: install
-install: script-install share-install install-uninstaller
+install: script-install share-install uninstaller-install
+
+.PHONY: uninstall
+uninstall: script-uninstall share-uninstall uninstaller-uninstall
+
+
+
+
+
+
+
+######## uninstaller ########
+name?=$(shell basename $$(pwd))
+
+prefix?=/usr/local
+datarootdir?=${prefix}/share
+datadir?=${datarootdir}
+owndatadir?=${datadir}/${name}
+
+uninstall_script?=${DESTDIR}${owndatadir}/uninstall
+
+.PHONY: uninstaller-install
+uninstaller-install:
 	mkdir -p $(shell dirname '${uninstall_script}')
 	echo '#!/usr/bin/env bash' > '${uninstall_script}'
 	$(MAKE) --silent --dry-run uninstall >> '${uninstall_script}'
 	chmod ugo+x '${uninstall_script}'
 
-.PHONY: uninstall
-uninstall: script-uninstall share-uninstall
 
-.PHONY: install-uninstaller
-install-uninstaller:
-	echo '#!/usr/bin/env bash' > '${DESTDIR}${owndatadir}/uninstall'
-	$(MAKE) --silent --dry-run uninstall >> '${DESTDIR}${owndatadir}/uninstall'
-	chmod ugo+x '${uninstall_script}'
+.PHONY: uninstaller-uninstall
+uninstaller-uninstall:
+	rm -rf '${uninstall_script}'
+
+
+
+
+
 
 
 
@@ -52,8 +91,17 @@ install-uninstaller:
 
 ######## include ########
 
-include_main_source_dir=${source_dir}/main/include
-include_main_source_names=$(shell test -d ${include_main_source_dir} && find ${include_main_source_dir} -type f -printf '%P ')
+name?=$(shell basename $$(pwd))
+version?=$(shell cat VERSION)
+
+prefix?=/usr/local
+datarootdir?=${prefix}/share
+datadir?=${datarootdir}
+owndatadir?=${datadir}/${name}
+
+source_dir?=src
+include_main_source_dir?=${source_dir}/main/include
+include_main_source_names?=$(shell test -d ${include_main_source_dir} && find ${include_main_source_dir} -type f -printf '%P ')
 
 
 # fun: $(call process_includes,<input file>,<output file>)
@@ -70,6 +118,7 @@ define process_includes_on_disk
 endef
 
 # fun: 
+# txt: make sed -e 's|&|\\\\&|g;' to avoid awk interpret ampersand and special character
 define process_include_file
 	what="{{include:$(1)}}"; \
 	with=$$(cat "${include_main_source_dir}/$(1)" | sed -e 's|&|\\\\&|g;' ); \
@@ -92,12 +141,25 @@ define process_includes
 endef
 
 
-######## script-main ########
 
-script_main_source_dir=${source_dir}/main/script
-script_main_source_names=$(shell test -d ${script_main_source_dir} && find ${script_main_source_dir} -type f -printf '%P ')
-script_main_target_dir=${target_dir}/main/script
-script_main_target_files=$(addprefix ${script_main_target_dir}/,${script_main_source_names})
+
+
+
+
+
+######## script-main(include) ########
+
+prefix?=/usr/local
+exec_prefix?=${prefix}
+bindir?=${exec_prefix}/bin
+
+source_dir?=src
+script_main_source_dir?=${source_dir}/main/script
+script_main_source_names?=$(shell test -d ${script_main_source_dir} && find ${script_main_source_dir} -type f -printf '%P ')
+
+target_dir?=target
+script_main_target_dir?=${target_dir}/main/script
+script_main_target_files?=$(addprefix ${script_main_target_dir}/,${script_main_source_names})
 
 ${script_main_target_dir}/%: ${script_main_source_dir}/%
 	mkdir -p $(dir $@)
@@ -120,14 +182,37 @@ script-uninstall:
 script-clean:
 	rm -rf ${script_main_target_dir}
 
+.PHONY: ${script_main_source_dir}/%-run
+${script_main_source_dir}/%-run: ${script_main_target_dir}/%-run
+	#
+
+.PHONY: ${script_main_target_dir}/%-run
+${script_main_target_dir}/%-run: ${script_main_target_dir}/%
+	@bash $< ${RUN_ARGS}
 
 
 
-######## script-test ########
 
-script_test_source_dir=${source_dir}/test/script
-script_test_source_names=$(shell test -d ${script_test_source_dir} && find ${script_test_source_dir} -type f -printf '%P ')
-script_test_target_dir=${target_dir}/test/script
+
+
+
+
+
+
+
+
+######## script-test(inlude, script-main) ########
+
+prefix?=/usr/local
+exec_prefix?=${prefix}
+bindir?=${exec_prefix}/bin
+
+source_dir?=src
+script_test_source_dir?=${source_dir}/test/script
+script_test_source_names?=$(shell test -d ${script_test_source_dir} && find ${script_test_source_dir} -type f -printf '%P ')
+
+target_dir?=target
+script_test_target_dir?=${target_dir}/test/script
 
 .PHONY: script-check-fake-install
 script-check-fake-install:
@@ -152,10 +237,28 @@ script-check-clean:
 
 
 
-######## share ########
 
-share_main_source_dir=${source_dir}/main/share
-share_main_source_names=$(shell test -d ${share_main_source_dir} && find ${share_main_source_dir} -type f -printf '%P ')
+
+
+
+
+
+
+
+######## share (include) ########
+
+name?=$(shell basename $$(pwd))
+
+prefix?=/usr/local
+datarootdir?=${prefix}/share
+datadir?=${datarootdir}
+owndatadir?=${datadir}/${name}
+
+source_dir?=src
+share_main_source_dir?=${source_dir}/main/share
+share_main_source_names?=$(shell test -d ${share_main_source_dir} && find ${share_main_source_dir} -type f -printf '%P ')
+
+target_dir?=target
 share_main_target_dir=${target_dir}/main/share
 
 ${share_main_target_dir}/%: ${share_main_source_dir}/%

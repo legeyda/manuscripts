@@ -1,0 +1,4 @@
+[submodule "makefiles"]
+	branch = master
+	path = makefiles
+	url = git@bitbucket.org:legeyda/makefiles.git
