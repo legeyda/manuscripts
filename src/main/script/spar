@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+set -eu
+
+{{include:bash-lib}}
+
+
+# fun: wrap-par2-create
+# env: parchive_file_name
+#      redundancy
+wrap-par2-create() {
+	assert-installed par2
+	errcho 'warning: recursive files depth > 1 may not be processed'
+	par2 c -r"${redundancy:-5}" -a"$parchive_file_name" -R *
+}
+
+# fun: wrap-parpar-create
+# env: parchive_file_name
+#      redundancy
+wrap-parpar-create() {
+	assert-installed parpar
+	parpar -s100m -o "$parchive_file_name" -R .
+
+
+}
+
+wrap-create() {
+	if   installed par2; do
+
+	elif installed parpar
+
+	else
+
+	end
+}
+
+main() {
+	today=$(date +%Y-%m-%d)
+}

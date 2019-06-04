@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+
+set -eux
+
+{{include:bash-lib}}
+
+#fun: urlencode str1 str2 str3
+urlencode() {
+    old_lc_collate=${LC_COLLATE:-}
+    LC_COLLATE=C
+    local str="$@"
+    local length="${#str}"
+    for (( i = 0; i < length; i++ )); do
+        local c="${str:i:1}"
+        case $c in
+            [a-zA-Z0-9.~_-]) printf "$c" ;;
+            *) printf '%%%02X' "'$c" ;;
+        esac
+    done
+    
+    LC_COLLATE=$old_lc_collate
+}
+
+#fun: urldecode str1 str2 str3
+urldecode() {
+	local str="$@"
+    local url_encoded="${str//+/ }"
+    printf '%b' "${url_encoded//%/\\x}"
+}
+
+read-clipboard() {
+	if installed xclip; then
+		xclip -out || true
+	fi
+}
+
+# env: input_text_value
+#      title
+#      question
+input-text() {
+	if tty -s; then
+		test -n "${title:-}" && echo "$title"
+		read -e -p "${question:-input text}:" -i "${input_text_value:-}" 
+	else
+		if installed yad; then
+			input_text_value=`yad    --width 500 --entry --title "${title:-input text}" --text "${question:-text}" --entry-text="$input_text_value"`
+		elif installed zenity; then
+			errcho 'warning: using zenity, consider installing yad, to prefill with clipboard'
+			input_text_value=`zenity --width 500 --entry --title "${title:-input text}" --text "${question:-text}"`
+		else
+			errcho 'neither yad nor zenity installed'
+		fi
+	fi
+}
+
+
+main() {
+
+	local query="$@"
+
+	if [[ -z "$query" ]]; then
+		local input_text_value=$(read-clipboard)
+		title='google search' question=query input-text
+		query="$input_text_value"
+	fi
+
+	if [ -n "$query" ]; then
+		local encoded_query=$(urlencode "$query")
+		xdg-open 'https://www.google.com/search?&q='"$encoded_query"'&btnI=I%27m+Feeling+Lucky'
+	else
+		echo empty query
+	fi
+
+}
+
+main "$@"

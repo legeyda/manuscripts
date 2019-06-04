@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -eu
+#rar a -m5 -s -sv -rr5% -v1g -k folder.rar folder
+rar a -m5 -s -sv -rr5% -v1g "$@"

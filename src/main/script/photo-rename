@@ -1,0 +1,108 @@
+#!/usr/bin/env bash
+set -eu
+
+{{include:bash-lib}}
+
+# env: time
+parse-exif-time() {
+	local result="${time//:/-}"
+	result="${result// /_}"
+	echo -n "$result"
+}
+
+# env: file
+#      tag
+extract-exif() {
+	exif --machine-readable --tag $tag $file 2> /dev/null | head -n 1
+}
+
+
+# env : file
+file-ext() {
+	local file_basename=$(basename -- "$file")
+	local file_ext="${file_basename##*.}"
+	if [[ -n "$file_ext" ]]; then
+		echo -n ".$file_ext"
+	fi
+}
+
+# env: file
+extract-file-time() {
+	local extracted_time
+	# DateTimeOriginal (date/time when original image was taken)
+	local extracted_time=$(tag=0x9003 extract-exif)
+	if [[ -z "$extracted_time" ]]; then
+		# CreateDate (called DateTimeDigitized by the EXIF spec.)
+		extracted_time=$(tag=0x9004 extract-exif)
+		if [[ -z "$extracted_time" ]]; then
+			# ModifyDate (called DateTime by the EXIF spec.)
+			extracted_time=$(tag=0x0132 extract-exif)
+			if [[ -z "$extracted_time" ]]; then
+				extracted_time=$(date --reference "$file" +%Y-%m-%d_%H-%M-%S)
+				if [[ -z "$extracted_time" ]]; then
+					return 1	
+				fi				
+			fi
+		fi
+	fi
+	time="$extracted_time" parse-exif-time
+}
+
+# env: file
+new-file-name() {
+	local file_dirname=$(dirname "$file")
+	local file_basename=$(basename "$file")
+	local file_ext=$(file-ext | awk '{print tolower($0)}')
+	local file_time=$(extract-file-time)
+	if [[ -n "$file_time" ]]; then
+		echo -n "$file_dirname/$file_time$file_ext"
+	fi
+}
+
+# env: file
+rename-file() {
+	if [[ ! -f "$file" ]]; then
+		errcho "$file not exists"
+		return 1
+	fi
+	local file_new_name=$(new-file-name)
+
+
+
+
+	if [[ "$file" == "$file_new_name" ]]; then
+		errcho "$file already named, skip"
+		return
+	fi
+
+	if [[ -z "$file_new_name" ]]; then
+		errcho "$file does not contain info"
+		return
+	fi
+
+	if [[ -e "$file_new_name" ]]; then
+		errcho "cannote rename $file to $file_new_name: already exist, skip"
+		return
+	fi
+
+	mv "$file" "$file_new_name"
+}
+
+# env: file ...
+rename-files() {
+	if [[ -n "${1:-}" ]]; then
+		while [[ -n "${1:-}" ]]; do
+			file="$1" rename-file
+			shift
+		done
+	fi
+}
+
+
+main() {
+	file=$1 rename-files "$@"
+
+
+}
+
+main "$@"

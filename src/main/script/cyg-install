@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+/setup-x86_64.exe --wait --quiet-mode --packages "$@"
