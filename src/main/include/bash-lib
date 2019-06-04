@@ -25,3 +25,18 @@ external-tool() {
 		return 1
 	fi
 }
+
+#fun: installed <program>
+installed() {
+	local EXE="$1"
+	command -v "$EXE" >/dev/null 2>&1 || return 1
+}
+
+
+assert-installed() {
+	local EXE="$1"
+	if ! installed "$EXE"; then
+		errcho "required program $EXE not found"
+		return 1
+	fi
+}

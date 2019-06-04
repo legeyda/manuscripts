@@ -3,7 +3,11 @@
 set -eu
 
 main() {
-	
+		
+	if [ -n "${CASE_DIR:-}" ]; then
+		KASE_DIR="$CASE_DIR"
+	fi
+
 	if [ -z "${KASE_DIR:-}" ]; then
 		KASE_DIR="$HOME/case"
 	fi

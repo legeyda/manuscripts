@@ -267,6 +267,7 @@ $found_group
 
 
 # fun: projects ...
+# txt: prints to stdout found projects
 # env: base_url
 #      token?
 #      group?
@@ -368,7 +369,6 @@ project() {
 				break
 			fi
 		done <<< "$groups"
-		echo "$found_project"
 	else
 		found_project=$(params="$params" max_pages=2 page_size=2 get-pageable-list projects .path_with_namespace)
 	fi

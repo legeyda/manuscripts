@@ -2,10 +2,6 @@
 
 set -eu
 
-function get-note-dir() {
-	
-	
-}
 
 main() {
 	

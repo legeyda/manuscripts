@@ -6,7 +6,7 @@ set -e
 
 
 
-declare -r LOG_BASE_DIR=$HOME/.local/share/log/blade-runner
+declare -r LOG_BASE_DIR=$HOME/.local/log/blade-runner
 
 # txt: print script usage info to stdout
 usage() {
@@ -52,7 +52,10 @@ run() {
 	done
 }
 
-
+# fun: sanitize-job-name /some/dirty/job/name
+sanitize-job-name() {
+	echo "$1" | sed 's|^/||g; s|/|-|g'
+}
 
 main() {
 	if [[ -z "${1:-}" ]]; then
@@ -88,15 +91,15 @@ main() {
 	fi
 
 	if [[ -z "$job_name" ]]; then
-		job_name="$1"
+		job_name=$(sanitize-job-name "$1")
 	fi
 
 	now="$(date +%Y-%m-%d_%H-%M-%S)"
-	mkdir -p "$LOG_BASE_DIR/$job_name"
+	mkdir -p "$LOG_BASE_DIR/$job_name/$now"
 
-	stdout_log="$LOG_BASE_DIR/$job_name/$now.stdout.log" \
-			stderr_log="$LOG_BASE_DIR/$job_name/$now.stderr.log" \
-			runner_log="$LOG_BASE_DIR/$job_name/$now.runner.log" \
+	stdout_log="$LOG_BASE_DIR/$job_name/$now/$now.stdout.log" \
+			stderr_log="$LOG_BASE_DIR/$job_name/$now/$now.stderr.log" \
+			runner_log="$LOG_BASE_DIR/$job_name/$now/$now.runner.log" \
 			attempts=$attempts \
 			interval=$interval \
 			run $@
