@@ -1,0 +1,28 @@
+
+
+
+
+
+# n-0,  1,   2, n-1, 
+# n-2,  3,   4, n-3, 
+# n-4,  5,   6, n-5, 
+# n-6,  7,   8, n-7, 
+# n-8,  9,  10, n-9, 
+# n-10, 11, 12, n-11
+
+main() {
+	local papers=8
+	local first=1
+	for j in $(seq $first $[$papers*4] 2095); do
+		echo
+		echo -n "$j-$[$j+$papers*4-1]: "
+		for i in $(seq 0 $[$papers-1]); do
+			echo -n "$[$j-1 + $papers*4-$i*2],"
+			echo -n "$[$j-1 + $i*2+1],"
+			echo -n "$[$j-1 + $i*2+2],"
+			echo -n "$[$j-1 + $papers*4-$i*2-1],"
+		done
+	done
+}
+
+main "$@"

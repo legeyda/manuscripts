@@ -1,0 +1,44 @@
+function assert-equals() {
+	if [ "$1" != "$2" ]; then
+		echo "expected value $1 does not equal actual value $2"
+		return 1
+	fi
+}
+
+function assert-dir-empty() {
+	if [ 0 != $(ls -1 --almost-all "$1" | wc --lines) ]; then
+		echo "expected dir $1 do empty, but it contains: $(ls -1 --almost-all "$1")"
+		return 1
+	fi
+}
+
+function assert-file-exists() {
+	if [ ! -f "$1" ]; then
+		echo "file $1 not exists"
+		return 1
+	fi
+}
+
+function assert-file-not-exists() {
+	if [ -e "$1" ]; then
+		echo "file $1 exists"
+		return 1
+	fi
+}
+
+function assert-equal-files() {
+	assert-file-exists "$1"
+	assert-file-exists "$2"
+
+	local stdout=$(diff "$1" "$2")
+	local code=$?
+	if [ 0 != "$code" ]; then
+		echo "diff exited with exit status $code, stdout was"
+		echo "$stdout"
+		return "$code"
+	elif [ -n "$stdout" ]; then
+		echo "expected output in $1 does not equal actual in $2, difference is below:"
+		echo "$stdout"
+		return 1
+	fi
+}

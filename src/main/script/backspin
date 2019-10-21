@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+
+{{include:bash-lib}}
+
+#txt: entry-point "$@"
+entry-point() {
+	# to run particular method without starting full installation
+	# bash -xc 'export NO_RUN=yes; . install; add-key-bindings'
+
+	if [[ 'yes' != "${NO_RUN:-no}" ]]; then
+		script_dir=$(get-script-dir) main "$@"
+	fi
+}
+
+get-script-dir() {
+	(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null && pwd)
+}
+
+last-dir() {
+	ls -1 -v --reverse "$@" | head -n 1
+}
+
+main() {
+	if [ -z "${1:-}" -o -z "${2:-}" ]; then
+		errcho not enough arguments
+		usage
+		return
+	fi
+	local source_dir="$1"
+	local target_dir="$2"
+
+
+	mkdir -p "$target_dir"
+
+
+	local last_dir=$(last-dir "$target_dir")
+
+	for format in '+%Y-%m-%d_%H-%M' '+%Y-%m-%d_%H-%M-%S' '+%Y-%m-%d_%H-%M-%S.%N'; do
+		local now=$(date "$format")
+		local current_snapshot="$target_dir/backup.$now"
+		if [[ ! -e "$current_snapshot" ]]; then
+			break
+		fi
+	done
+	if [[ -e "$current_snapshot" ]]; then
+		errcho "something wrong here: $current_snapshot exists"
+		return 1
+	fi
+	
+
+	if [[ -n "$last_dir" ]]; then
+		rsync --verbose -a --delete "--link-dest=../$last_dir" "$source_dir"  "$current_snapshot"
+	else
+		rsync --verbose -a --delete                            "$source_dir"  "$current_snapshot"
+	fi
+
+
+	#rdfind --makeresultsfile false -makehardlinks true  "$previous_snapshot" "$current_snapshot"
+	
+}
+
+usage() {
+	echo 'backsping <source_dir> <target_dir>'
+}
+
+
+entry-point "$@"

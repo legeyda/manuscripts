@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+set -eu
+
+{{include:test-bash-lib}}
+
+
+main() {
+	rm -rf   ./test_backspin
+	mkdir -p ./test_backspin
+	cd ./test_backspin
+	mkdir -p src dest
+
+
+	# ======== initial backup ========
+	echo 'hello'  > src/greet.txt
+	echo 'adious' > src/bye.txt
+
+	local t1=$(date '+%Y-%m-%d_%H-%M')
+	backspin src/ dest
+
+	assert-equal-files src/greet.txt dest/backup.$t1/greet.txt
+	assert-equal-files src/bye.txt dest/backup.$t1/bye.txt
+
+
+	# ======== incremental backup ========
+	echo 'hi' > src/greet.txt
+
+	local t2=$(date '+%Y-%m-%d_%H-%M-%S')
+	backspin src/ dest
+
+	assert-equal-files src/greet.txt dest/backup.$t2/greet.txt
+	assert-equal-files src/bye.txt dest/backup.$t1/bye.txt
+
+
+	# ======== old versions are safe ========
+	assert-equals hello "$(cat dest/backup.$t1/greet.txt)"
+	assert-equals adious "$(cat dest/backup.$t1/bye.txt)"
+
+
+	# ======== equal versions of file are hard links ========
+	echo 'edit to check if are hardlinks' > dest/backup.$t1/bye.txt
+	assert-equal-files dest/backup.$t1/bye.txt dest/backup.$t2/bye.txt
+
+	echo '======== ok ========'
+}
+
+main "$@"

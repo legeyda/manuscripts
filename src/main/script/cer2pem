@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+set -xe
+
+openssl x509 -inform der -in "$1" -out "$2"

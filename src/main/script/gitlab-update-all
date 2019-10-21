@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+
+#env: base_dir
+main() {
+	mkdir -p "$base_dir"
+
+	gitlab projects | while read path; do
+		echo
+		echo
+		echo "======== now updating $path ========"
+
+
+		if [ -d "$base_dir/$path" ]; then
+			cd "$base_dir/$path"	
+		else
+			mkdir -p "$base_dir/$path"
+			cd "$base_dir/$path"
+			git clone "git@source.isimplelab.com:${path}.git" .
+		fi
+		git fetch --all
+		git merge FETCH_HEAD
+
+		echo "fetching $path ok"
+
+		#sleep 30
+	done
+	
+
+}
+
+base_dir=$(realpath .) main "$@"
