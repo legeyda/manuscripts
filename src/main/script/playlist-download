@@ -1,3 +1,10 @@
 #!/usr/bin/env bash
 
-exec youtube-dl --playlist-reverse --output '%(playlist_index)03d %(title)s.%(ext)s' --no-overwrites "$@"
+echo 'use --playlist-reverse to reverse item order of playlist'
+exec youtube-dl \
+		--min-sleep-interval 10 \
+		--max-sleep-interval 30 \
+		--playlist-reverse \
+		--output '%(playlist_index)03d %(title)s.%(ext)s' \
+		--no-overwrites \
+		"$@"

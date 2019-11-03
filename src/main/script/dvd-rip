@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+
+entry-point() {
+	set -eu
+	main "$@"
+}
+
+main() {
+	local output="$1"
+	shift
+#	cat "$@" | nice ffmpeg -i - -s 512x384 -vcodec libtheora -acodec libvorbis "$output.ogg"
+	cat "$@" | nice ffmpeg -i - -map 0:v:0 -map 0:a:0 -codec:a libvo_aacenc -ab 128 -codec:v libx264 -preset libx264-ipod640 "${output}.mp4"
+#	cat "$@" | nice ffmpeg -i - -acodec libfaa c -ab 128 -vcodec libx264 -vpre medium_quality -threads 0 "${output}.mp4"
+#	cat "$@" | nice ffmpeg -i - -vf yadif -vcodec h264 -acodec mp2 "${output}.mp4"
+
+}
+
+
+
+
+################
+entry-point "$@"
+
+
+
+

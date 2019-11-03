@@ -17,7 +17,7 @@ errxit() {
 external-tool() {
 	local tool="$1"
 	shift
-	if which "$tool" > /dev/null; then
+	if installed "$tool" > /dev/null; then
 		"$tool" "$@"
 		return $?
 	else

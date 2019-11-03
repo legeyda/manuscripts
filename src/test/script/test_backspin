@@ -15,31 +15,32 @@ main() {
 	echo 'hello'  > src/greet.txt
 	echo 'adious' > src/bye.txt
 
-	local t1=$(date '+%Y-%m-%d_%H-%M')
+	local t1=$(date '+%Y-%m-%d_%H-%M-%S')
 	backspin src/ dest
 
-	assert-equal-files src/greet.txt dest/backup.$t1/greet.txt
-	assert-equal-files src/bye.txt dest/backup.$t1/bye.txt
+	assert-equal-files src/greet.txt dest/backup_$t1/greet.txt
+	assert-equal-files src/bye.txt   dest/backup_$t1/bye.txt
 
 
 	# ======== incremental backup ========
 	echo 'hi' > src/greet.txt
 
+	sleep 1
 	local t2=$(date '+%Y-%m-%d_%H-%M-%S')
 	backspin src/ dest
 
-	assert-equal-files src/greet.txt dest/backup.$t2/greet.txt
-	assert-equal-files src/bye.txt dest/backup.$t1/bye.txt
+	assert-equal-files src/greet.txt dest/backup_$t2/greet.txt
+	assert-equal-files src/bye.txt   dest/backup_$t1/bye.txt
 
 
 	# ======== old versions are safe ========
-	assert-equals hello "$(cat dest/backup.$t1/greet.txt)"
-	assert-equals adious "$(cat dest/backup.$t1/bye.txt)"
+	assert-equals hello  "$(cat dest/backup_$t1/greet.txt)"
+	assert-equals adious "$(cat dest/backup_$t1/bye.txt)"
 
 
 	# ======== equal versions of file are hard links ========
-	echo 'edit to check if are hardlinks' > dest/backup.$t1/bye.txt
-	assert-equal-files dest/backup.$t1/bye.txt dest/backup.$t2/bye.txt
+	echo 'edit to check if are hardlinks' > dest/backup_$t1/bye.txt
+	assert-equal-files dest/backup_$t1/bye.txt dest/backup_$t2/bye.txt
 
 	echo '======== ok ========'
 }
