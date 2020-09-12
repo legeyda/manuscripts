@@ -3,7 +3,7 @@ set -eu
 mkdir -p ~/.local/var/log/logg
 
 echo >>  ~/.local/var/log/logg/stdout.txt 
-echo >>  ~/.local/var/log/logg/stdout.txt 
+echo >>  ~/.local/var/log/logg/stderr.txt 
 echo "======== logg $(date) ========" >>  ~/.local/var/log/logg/stdout.txt 
 
 bash -exc "$@" \

@@ -1,43 +1,64 @@
 #!/usr/bin/env bash
 
-set -eu
+{{include:entry-point.sh}}
 
-
+# env: script_dir
 main() {
-	
-	if [ -z "${NOTE_DIR:-}" ]; then
-		if [ -d "$HOME/notes" ]; then
-			NOTE_DIR="$HOME/notes"
-		elif [ -d "$HOME/Dropbox/notes" ]; then
-			NOTE_DIR="$HOME/Dropbox/notes"
-		else
-			NOTE_DIR="$HOME"
+	local title="$@"
+	if [ -z "$title" ]; then
+		user-input-invite new note title
+		local title=$(user-input-read)
+
+		if [[ -z "$title" ]]; then
+			message empty title
+			return 1
 		fi
 	fi
 
-	# if [ -z "${EDITOR:-}" ]; then
-		
-	# fi
-
-
-	local title="$@"
-	if [ -z "$title" ]; then
-		if tty -s; then
-			echo 'input title'
-			read title
-		else
-			# exit script if cancel
-			title=`zenity --entry --text 'note title' --title nnote`
-		fi		
-	fi
-
-	if [ -n "$title" ]; then
-		local today=`date +%Y-%m-%d`
-		${NNOTE_EDITOR:-${EDITOR:-vi}} "$NOTE_DIR/$today $title${NOTE_EXT:-.txt}"
-	else
-		echo empty title
-	fi
-
+	local today=`date +%Y-%m-%d`
+	file-editor-run "$(get-notes-dir)/$today $title$(get-note-file-extension)"
 }
 
-main "$@"
+{{include:bash-lib}}
+{{include:user-input.sh}}
+{{include:file-editor.sh}}
+{{include:external-tool.sh}}
+
+
+# env: HOME
+#      NOTE_DIR?
+#      script_dir
+get-notes-dir() {
+	if [[ -n "${NOTE_DIR:-}" ]]; then
+		echo "$NOTE_DIR"
+	elif [[ -d "$HOME/notes" ]]; then
+		echo "$HOME/notes"
+	elif [[ -d "$HOME/box/notes" ]]; then
+		echo "$HOME/box/notes"
+	else
+		mkdir -p "$HOME/notes"
+		echo "$HOME/notes"
+	fi
+}
+
+# env: NOTE_EXT?
+get-note-file-extension() {
+	echo "${NOTE_EXT:-.txt}"
+}
+
+
+
+#fun: message hello
+function message() {
+	if is-interactive; then
+		echo "$@"
+	else
+		if ! external-tool-available zenity; then
+			errcho zenity not installed
+		fi
+		zenity --info --text "$@" --title nnote	
+	fi
+}
+
+
+entry-point "$@"

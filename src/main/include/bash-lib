@@ -14,6 +14,7 @@ errxit() {
 	exit "$retcode"
 }
 
+#deprecated use available-programs.sh
 external-tool() {
 	local tool="$1"
 	shift
