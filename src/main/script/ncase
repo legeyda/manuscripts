@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+
+{{include:bash-lib}}
+{{include:user-interaction.sh}}
+{{include:file-editor.sh}}
+{{include:external-tool.sh}}
+
+# env: script_dir
+main() {
+	local title="$@"
+	if [ -z "$title" ]; then
+		user-input-read title
+
+		if [[ -z "$title" ]]; then
+			message empty title
+			return 1
+		fi
+	fi
+
+	local today=`date +%Y-%m-%d`
+	local case_dir="$(get-case-home-dir)/${today}_$title"
+	mkdir -p "$case_dir"
+	code --new-window --goto "$case_dir/notes.txt" "$case_dir"
+}
+
+
+
+
+# env: HOME
+#      NOTE_DIR?
+#      script_dir
+get-case-home-dir() {
+	if [[ -n "${CASE_DIR:-}" ]]; then
+		echo "$CASE_DIR"
+	elif [[ -d "$HOME/case" ]]; then
+		echo "$HOME/case"
+	elif [[ -d "$HOME/box/case" ]]; then
+		echo "$HOME/box/case"
+	else
+		mkdir -p "$HOME/case"
+		echo "$HOME/case"
+	fi
+}
+
+# env: NOTE_EXT?
+get-note-file-extension() {
+	echo "${NOTE_EXT:-.txt}"
+}
+
+
+{{include:entry-point}}

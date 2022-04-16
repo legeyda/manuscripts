@@ -1,3 +1,4 @@
+include makefiles/Makefile.base
 include makefiles/Makefile.include
 include makefiles/Makefile.script
 include makefiles/Makefile.share

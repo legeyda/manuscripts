@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-
 set -eux
 
 {{include:bash-lib}}
@@ -34,19 +33,28 @@ read-clipboard() {
 	fi
 }
 
-# env: input_text_value
-#      title
-#      question
+# env: default_answer
+#      answer?
+#      title?
+#      question?
 input-text() {
 	if tty -s; then
 		test -n "${title:-}" && echo "$title"
-		read -e -p "${question:-input text}:" -i "${input_text_value:-}" 
+		local safe_default_answer=$(echo "${default_answer:-}" | head -1 | cut -c 1-50)
+		if [[ -n "${safe_default_answer:-}" ]]; then
+			read -e -p "${question:-input text} [${safe_default_answer}]:" answer
+			if [[ -z "$answer" ]]; then
+				answer="$safe_default_answer"
+			fi
+		else
+			read -e -p "${question:-input text}:" answer
+		fi
 	else
 		if installed yad; then
-			input_text_value=`yad    --width 500 --entry --title "${title:-input text}" --text "${question:-text}" --entry-text="$input_text_value"`
+			answer=`yad --center --width 500 --entry --title "${title:-input text}" --text "${question:-text}" --entry-text="$default_answer"`
 		elif installed zenity; then
 			errcho 'warning: using zenity, consider installing yad, to prefill with clipboard'
-			input_text_value=`zenity --width 500 --entry --title "${title:-input text}" --text "${question:-text}"`
+			answer=`zenity --width 500 --entry --title "${title:-input text}" --text "${question:-text}" --entry-text="$default_answer"`
 		else
 			errcho 'neither yad nor zenity installed'
 		fi
@@ -55,22 +63,22 @@ input-text() {
 
 
 main() {
-
 	local query="$@"
 
 	if [[ -z "$query" ]]; then
-		local input_text_value=$(read-clipboard)
-		title='google search' question=query input-text
-		query="$input_text_value"
+		title='web search' question=query default_answer=$(read-clipboard) input-text
+		query="$answer"
 	fi
 
 	if [ -n "$query" ]; then
-		local encoded_query=$(urlencode "$query")
-		xdg-open 'https://www.google.com/search?&q='"$encoded_query"'&btnI=I%27m+Feeling+Lucky'
+		# local encoded_query=$(urlencode "$query")
+		# see solutions on https://superuser.com/questions/1496083/google-feeling-lucky-url-causing-redirect-notice
+		xdg-open 'https://www.google.com/search?btnI=1&q='"$query"
+		#xdg-open "https://duckduckgo.com/?q=!+$query"
 	else
 		echo empty query
 	fi
 
 }
 
-main "$@"
+{{include:entry-point}}

@@ -3,7 +3,6 @@ SETLOCAL
 
 SET SCRIPT_DIR=%~dp0
 SET SCRIPT_DIR=%SCRIPT_DIR:~0,-1%
-REM ECHO script dir is '%SCRIPT_DIR%'
 
 REM строка с текущей датой
 FOR /F "skip=1" %%x IN ('wmic os get localdatetime') DO if not defined WMIC_DATE set WMIC_DATE=%%x
@@ -13,23 +12,19 @@ SET /P TITLE="Note title: "
 IF "%TITLE%" == "" GOTO :EOF
 
 REM найдём папку с заметками
-IF "%NOTE_HOME%"=="" (
+IF "%NNOTE_DIR%"=="" (
     IF EXIST %USERPROFILE%\notes (
-        set NOTE_HOME=%USERPROFILE%\notes
+        set NNOTE_DIR=%USERPROFILE%\notes
     ) ELSE (
-        IF EXIST %SCRIPT_DIR%\..\..\notes (
-            set NOTE_HOME=%SCRIPT_DIR%\..\..\notes
-        ) else (
-            set NOTE_HOME=.
-        )
+        set NNOTE_DIR=.
     )
 )
-echo note home is '%NOTE_HOME%'
+echo note home is '%NNOTE_DIR%'
 
-set NOTE_FILE=%NOTE_HOME%\%TODAY%_%TITLE%.txt
+set NOTE_FILE=%NNOTE_DIR%\%TODAY%_%TITLE%.txt
 echo this note is %NOTE_FILE%
 
-REM найдём текстовый редактор
+REM найдём и запустим текстовый редактор
 WHERE code >nul 2>nul
 IF %ERRORLEVEL%==0 (
     code "%NOTE_FILE%"

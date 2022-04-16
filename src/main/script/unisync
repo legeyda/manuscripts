@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -u
+
+IGNORE_TEMP_FILES="-ignore 'Path .sync.db'
+-ignore 'Path sync.ffs_db'
+-ignore 'Path .dropbox.cache'
+-ignore 'Path .cache'
+-ignore 'Path .dropbox'
+-ignore 'Regex .*socket'
+-ignore 'Name .metadata'
+-ignore 'Name offline'
+-ignore 'Path .sync'
+-ignore 'Path Android'
+-ignore 'Path .android_secure'
+-ignore 'Path DropsyncFiles'
+-ignore 'Path LOST.DIR'
+-ignore 'Path System Volume Information'
+-ignore 'Name *.lock'"
+
+main() {
+    local root1=$1
+    local root2=$2
+    unison-gtk \
+        $IGNORE_TEMP_FILES \
+        -perms 0x0 \
+        \ "$root1" "$root2"
+}
+
+main "$@" && exit 0
+

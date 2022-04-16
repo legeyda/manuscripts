@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -eu
+
+main() {
+	if [[ -n "$@" ]]; then
+		git add "$@"
+	else
+		git add .
+	fi
+
+	git commit -m "git now $(date)"
+	git reset --soft HEAD~1
+}
+
+main "$@"

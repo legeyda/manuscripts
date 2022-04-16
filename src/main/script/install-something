@@ -1,0 +1,360 @@
+#!/usr/bin/env bash
+
+
+entry-point() {
+	# to run particular method without starting full installation
+	# bash -xc 'export NO_RUN=yes; . install; add-key-bindings'
+
+	if [[ 'yes' != "${NO_RUN:-no}" ]]; then
+		echo install
+		script_dir=$(get-script-dir) main "$@"
+	fi
+}
+
+get-script-dir() {
+	(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null && pwd)
+}
+
+# env: script_dir
+main() {
+	set -ex
+	#file=.otroslogviewer/plugins link-back 
+	#file=.otroslogviewer/config.xml link-back 
+
+	install-packages
+
+	ssh-key
+	git-config
+	git-ignore
+
+
+
+	#add-key-bindings
+}
+
+runnable() {
+	# https://stackoverflow.com/questions/592620/how-to-check-if-a-program-exists-from-a-bash-script
+	command -v "$1" >/dev/null 2>&1 && return 0 || return 1
+}
+
+errcho() {
+	(>&2 echo "$@")
+}
+
+install-adobe-reader() {
+	apt-get-install gdebi-core libxml2:i386 libcanberra-gtk-module:i386 gtk2-engines-murrine:i386 libatk-adaptor:i386
+	install-deb-from-url ftp://ftp.adobe.com/pub/adobe/reader/unix/9.x/9.5.5/enu/AdbeRdr9.5.5-1_i386linux_enu.deb
+}
+
+
+
+install-package() {
+	if runnable apt-get; then
+		apt-get-install "$@"
+	else
+		errcho "apt-get not runnable, yum not supported (installing $@)"
+	fi
+}
+
+apt-get-install() {
+	sudo apt-get install --yes --ignore-missing "$@"
+}
+
+install-deb-from-url() {
+	local package_url="$1"
+	local package_file="$(mktemp --suffix=.deb)" &&
+	wget -O "$package_file" "$package_url" &&
+	sudo dpkg -i "$package_file"
+	rm -f "$package_file"
+}
+
+install-packages() {
+	sudo apt update
+	apt-get-install software-properties-common apt-transport-https wget
+
+	apt-trust https://dl-ssl.google.com/linux/linux_signing_key.pub
+	apt-repo chrome 'deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main'
+
+	apt-trust https://packages.microsoft.com/keys/microsoft.asc	
+	apt-repo vscode 'deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main'
+
+	apt-trust https://repo.skype.com/data/SKYPE-GPG-KEY
+	apt-repo skype  'deb [arch=amd64] https://repo.skype.com/deb stable main'
+
+	apt-trust https://download.sublimetext.com/sublimehq-pub.gpg
+	apt-repo sublime 'deb https://download.sublimetext.com/ apt/stable/'
+
+	apt-trust https://download.teamviewer.com/download/linux/signature/TeamViewer2017.asc
+	apt-repo teamviewer 'deb http://linux.teamviewer.com/deb stable main'
+
+	sudo apt update
+	apt-get-install google-chrome-stable code skypeforlinux sublime-text teamviewer
+
+
+
+	apt-get-install \
+			ssh git gitk copyq dconf-tools \
+			docker docker-compose \
+			gparted virtualbox \
+			filezilla doublecmd-gtk tilda \
+			rar unrar unrar-free \
+			cinnamon cinnamon-desktop-environment
+
+
+	# luarocks
+	# recoll
+	# yad
+	# ansible
+	# krusader
+	# qrencode
+	# sendemail
+	# maven
+	# bridge-utils
+	# fbreader
+	# txwinrm
+	# translate-shell
+	# apache2
+	# nginx
+	# libapache2-mod-jk
+	# traceroute
+	# vagrant
+	# okular-extra-backends
+	# pandoc
+	# zim
+	# m4
+	# vmware-manager
+	# mssql-tools
+	# unixodbc-dev
+	# shim-signed
+	# mate
+	# gpa
+	# gparted
+	# ca-certificates
+	# curl
+	# docker-ce
+	# 
+	# lib32z1
+	# lib32ncurses5
+	# network-manager-openconnect
+	# yakuake
+	# wmctrl
+	# libccid
+	# pcscd
+	# virtualbox
+	# pcsc-tools
+	# gconf-editor
+	# gnome-tweak-tool
+	# ssh-askpass
+	# xclip
+	# lua5.1
+	# unp
+	# jq
+	# lua-filesystem
+	# cinnamon
+	# cinnamon-desktop-environment
+	# lightdm
+	# python-pip
+	# install
+	# anki
+	# python3-distutils
+	# wkhtmltopdf
+	# npm
+	# partitionmanager
+	# unison-gtk
+	# gitk
+	# printer-driver-cups-pdf
+	# qrencode
+
+	
+}
+
+# fun: apt-trust <URL OF SERTIFICATE FOR APT TO TRUST>
+apt-trust() {
+	wget -q -O - "$1" | sudo apt-key add -
+}
+
+# fun: apt-repo <file id in sources.list.d> <repo str> 
+apt-repo() {
+	echo "$2" | sudo dd "of=/etc/apt/sources.list.d/$1.list"
+}
+
+
+
+
+
+ssh-key() {
+	if [[ ! -e ~/.ssh ]]; then
+		ssh-keygen -q
+		echo 'now ensure that key in ~/.ssh/id_rda.pub is copied to ssh servers and press <enter>'
+		read
+	fi	
+}
+
+
+# env: file
+#      HOME
+link-back() {
+	if [[ -n "$HOME/$file" ]]; then
+		mkdir --parents "$(dirname "$HOME/$file")"
+		ln --symbolic --no-target-directory "$script_dir/home/$file" "$HOME/$file" 
+	fi
+}
+
+
+
+
+
+
+
+git-config() {
+	git config --global alias.st  status
+	git config --global alias.co  checkout
+	git config --global alias.b   branch
+	git config --global alias.sub submodule
+	git config --global alias.l1  'log -n 1'
+	git config --global alias.l2  'log -n 2'
+	git config --global alias.l3  'log -n 3'
+	git config --global alias.cob 'checkout -b'
+}
+
+
+git-ignore() {
+	file=~/.gitignore_global file-lines \
+		'*.sublime-project' \
+	    '*.sublime-workspace' \
+	    '.vscode' \
+	    '.classpath' \
+	    '.project' \
+	    '.settings/' \
+	    '*.stackdump' \
+	    '*.iws' \
+	    '*.ipr' \
+	    '*.iml' \
+	    '.idea'
+}
+
+# fun: file-lines line1 line2 line3
+# env: file: file to insert lines into
+file-lines() {
+	for line in "$@"; do
+		grep "$line" "$file" > /dev/null || echo "$line" >> "$file"
+	done
+}
+
+
+
+
+
+
+# txt: добавить кастомные конфигурации
+add-key-bindings() {
+	echo 'configuring custom key binding...'
+
+	id=focus-dblcmd   letter=d command="focus-window --title 'Double Commander' --command doublecmd" \
+		add-super-key-binding
+	id=kase           letter=с command="kase" \
+		add-super-key-binding
+	id=focus-vscode   letter=v command="focus-window --title 'Visual Studio Code' --command code" \
+		add-super-key-binding
+	id=copyq-menu     letter=q command='copyq menu' \
+		add-super-key-binding
+	id=focus-sublime  letter=s command="focus-window --title 'Sublime Text' --command subl" \
+		add-super-key-binding
+	id=focus-datagrip letter=b command="focus-window --title 'DataGrip' --command datagrip" \
+		add-super-key-binding
+	id=focus-keepassx letter=k command="focus-window --title KeePassX --command keepassx" \
+		add-super-key-binding
+	id=focus-monitor  letter=m command="focus-window --title Системный --command gnome-system-monitor" \
+		add-super-key-binding
+	id=nnote          letter=n command="/home/user/Dropbox/etc/bin/nnote" \
+		add-super-key-binding
+	id=google-lucky   letter=g command="goo" \
+		add-super-key-binding
+
+}
+
+# env: id
+#      letter
+#      command
+add-super-key-binding() {
+	id=$id name=$id binding="<Super>$letter" command="$command" add-key-binding
+}
+
+# env: id
+#      name
+#      command
+#      binding
+add-key-binding() {
+	# gnome ()
+	value_key_prefix=/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings \
+	        list_key=/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings \
+		list_item_full_path=yes \
+		add-key-binding-for-desktop
+
+	# cinnamon
+	value_key_prefix=/org/cinnamon/desktop/keybindings/custom-keybindings \
+	        list_key=/org/cinnamon/desktop/keybindings/custom-list \
+		list_item_full_path=no \
+		add-key-binding-for-desktop
+
+	# mate (dont know where keys, just guess)
+	value_key_prefix=/org/mate/desktop/keybindings \
+	        list_key=/org/mate/desktop/keybindings/custom-list \
+		list_item_full_path=no \
+		add-key-binding-for-desktop
+}
+
+# env: value_key_prefix
+#      list_key
+#      id
+#      name
+#      command
+#      binding
+#      list_item_full_path
+add-key-binding-for-desktop() {
+	local escaped_name=$(escape-single-quote "$name")
+	dconf write "$value_key_prefix/$id/name" "'$escaped_name'"
+
+	local escaped_command=$(escape-single-quote "$command")
+	dconf write "$value_key_prefix/$id/command" "'$escaped_command'"
+
+	key="$value_key_prefix/$id/binding" item="$binding" dconf-list-ensure-item
+	if [ yes == "${list_item_full_path:-no}" ]; then # for gnome full key required
+		key=$list_key item="$value_key_prefix/$id" dconf-list-ensure-item
+	else
+		key=$list_key item="$id" dconf-list-ensure-item
+	fi
+}
+
+escape-single-quote() {
+	local sed_command='s|\\|\\\\|g;'"s|'|\\\\'|g"
+	if [ -n "${@:-}" ]; then
+		echo "$@" | sed "$sed_command"
+	else
+		sed "$sed_command"
+	fi
+}
+
+# env: key
+#      item
+dconf-list-ensure-item() {
+	local list_value=$(dconf read "$key")
+	local escaped_item=$(escape-single-quote "$item")
+	if [ -z "$list_value" -o '[]' == "$list_value" -o '@as []' == "$list_value" ]; then
+		dconf write "$key" "['$escaped_item']"
+	elif echo "$list_value" | grep -q "'$escaped_item'"; then
+		dconf write "$key" "$list_value"
+	else
+		local new_value=$(echo "$list_value" | sed "s|\]|, '$escaped_item'\]|g")
+		dconf write "$key" "$new_value"
+	fi
+}
+
+
+
+
+
+
+
+entry-point "$@"
+

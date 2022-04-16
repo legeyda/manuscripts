@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+main() {
+	errcho 'not implemented (yet)'
+	#dirname $(mktemp)
+}
+
+{{include:bash-lib}}
+{{include:entry-point}}

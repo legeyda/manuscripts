@@ -38,10 +38,12 @@ extract-file-time() {
 			# ModifyDate (called DateTime by the EXIF spec.)
 			extracted_time=$(tag=0x0132 extract-exif)
 			if [[ -z "$extracted_time" ]]; then
+				return 1
+				# do not rename today
 				extracted_time=$(date --reference "$file" +%Y-%m-%d_%H-%M-%S)
 				if [[ -z "$extracted_time" ]]; then
 					return 1	
-				fi				
+				fi
 			fi
 		fi
 	fi
@@ -49,14 +51,25 @@ extract-file-time() {
 }
 
 # env: file
+guess-file-time() {
+	local candidate=$(extract-file-time)
+	if [[ -n "$candidate" ]]; then
+		return "$candidate"
+	fi
+
+	# sed -E 's/.*(20[0-9]{2})([0-9]{2})([0-9]{2})_([0-9]{2})([0-9]{2})([0-9]{2})(.*)/\1-\2-\3_\4-\5-\6/g'
+}
+
+# env: file
 new-file-name() {
+	local file_time=$(guess-file-time)
+	if [[ -z "$file_time" ]]; then
+		return
+	fi
 	local file_dirname=$(dirname "$file")
 	local file_basename=$(basename "$file")
 	local file_ext=$(file-ext | awk '{print tolower($0)}')
-	local file_time=$(extract-file-time)
-	if [[ -n "$file_time" ]]; then
-		echo -n "$file_dirname/$file_time$file_ext"
-	fi
+	echo -n "$file_dirname/$file_time${file_suffix:-}$file_ext"
 }
 
 # env: file
@@ -66,9 +79,6 @@ rename-file() {
 		return 1
 	fi
 	local file_new_name=$(new-file-name)
-
-
-
 
 	if [[ "$file" == "$file_new_name" ]]; then
 		errcho "$file already named, skip"
@@ -81,8 +91,16 @@ rename-file() {
 	fi
 
 	if [[ -e "$file_new_name" ]]; then
-		errcho "cannote rename $file to $file_new_name: already exist, skip"
-		return
+		local file_new_name_index=1
+		while true; do
+			file_new_name=$(file_suffix="_$(printf "%02d" $file_new_name_index)" new-file-name)
+			if [[ -e "$file_new_name" ]]; then
+				file_new_name_index=$[$file_new_name_index + 1 ]
+			else
+				break;
+			fi
+		done
+		echo "cannot rename $file exact: already exist, rename to $file_new_name"
 	fi
 
 	mv "$file" "$file_new_name"

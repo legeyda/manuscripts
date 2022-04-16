@@ -13,5 +13,8 @@ entry-point() {
 # env: BASH_SOURCE
 #      0
 function script-is-sourced() {
+	# todo https://unix.stackexchange.com/a/215279
     test "${BASH_SOURCE[0]}" != "${0}" || return 1
 }
+
+entry-point "$@"

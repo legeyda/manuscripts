@@ -1,16 +1,18 @@
 #!/usr/bin/env bash
 
-{{include:entry-point.sh}}
+{{include:bash-lib}}
+{{include:user-interaction.sh}}
+{{include:file-editor.sh}}
+{{include:external-tool.sh}}
 
 # env: script_dir
 main() {
 	local title="$@"
 	if [ -z "$title" ]; then
-		user-input-invite new note title
-		local title=$(user-input-read)
+		question='note title' title='new note creation' default="$(read-clipboard)" user-input-read title
 
 		if [[ -z "$title" ]]; then
-			message empty title
+			message "empty title"
 			return 1
 		fi
 	fi
@@ -19,18 +21,20 @@ main() {
 	file-editor-run "$(get-notes-dir)/$today $title$(get-note-file-extension)"
 }
 
-{{include:bash-lib}}
-{{include:user-input.sh}}
-{{include:file-editor.sh}}
-{{include:external-tool.sh}}
+read-clipboard() {
+	if installed xclip; then
+		xclip -out || true
+	fi
+}
+
 
 
 # env: HOME
-#      NOTE_DIR?
+#      NNOTE_DIR?
 #      script_dir
 get-notes-dir() {
-	if [[ -n "${NOTE_DIR:-}" ]]; then
-		echo "$NOTE_DIR"
+	if [[ -n "${NNOTE_DIR:-}" ]]; then
+		echo "$NNOTE_DIR"
 	elif [[ -d "$HOME/notes" ]]; then
 		echo "$HOME/notes"
 	elif [[ -d "$HOME/box/notes" ]]; then
@@ -46,19 +50,4 @@ get-note-file-extension() {
 	echo "${NOTE_EXT:-.txt}"
 }
 
-
-
-#fun: message hello
-function message() {
-	if is-interactive; then
-		echo "$@"
-	else
-		if ! external-tool-available zenity; then
-			errcho zenity not installed
-		fi
-		zenity --info --text "$@" --title nnote	
-	fi
-}
-
-
-entry-point "$@"
+{{include:entry-point}}
