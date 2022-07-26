@@ -2,74 +2,20 @@
 set -eu
 
 {{include:bash-lib}}
+{{include:debug.sh}}
 
-# env: time
-parse-exif-time() {
-	local result="${time//:/-}"
-	result="${result// /_}"
-	echo -n "$result"
+main() {
+	rename-files "$@"
 }
 
-# env: file
-#      tag
-extract-exif() {
-	exif --machine-readable --tag $tag $file 2> /dev/null | head -n 1
-}
-
-
-# env : file
-file-ext() {
-	local file_basename=$(basename -- "$file")
-	local file_ext="${file_basename##*.}"
-	if [[ -n "$file_ext" ]]; then
-		echo -n ".$file_ext"
+# env: file ...
+rename-files() {
+	if [[ -n "${1:-}" ]]; then
+		while [[ -n "${1:-}" ]]; do
+			file="$1" rename-file
+			shift
+		done
 	fi
-}
-
-# env: file
-extract-file-time() {
-	local extracted_time
-	# DateTimeOriginal (date/time when original image was taken)
-	local extracted_time=$(tag=0x9003 extract-exif)
-	if [[ -z "$extracted_time" ]]; then
-		# CreateDate (called DateTimeDigitized by the EXIF spec.)
-		extracted_time=$(tag=0x9004 extract-exif)
-		if [[ -z "$extracted_time" ]]; then
-			# ModifyDate (called DateTime by the EXIF spec.)
-			extracted_time=$(tag=0x0132 extract-exif)
-			if [[ -z "$extracted_time" ]]; then
-				return 1
-				# do not rename today
-				extracted_time=$(date --reference "$file" +%Y-%m-%d_%H-%M-%S)
-				if [[ -z "$extracted_time" ]]; then
-					return 1	
-				fi
-			fi
-		fi
-	fi
-	time="$extracted_time" parse-exif-time
-}
-
-# env: file
-guess-file-time() {
-	local candidate=$(extract-file-time)
-	if [[ -n "$candidate" ]]; then
-		return "$candidate"
-	fi
-
-	# sed -E 's/.*(20[0-9]{2})([0-9]{2})([0-9]{2})_([0-9]{2})([0-9]{2})([0-9]{2})(.*)/\1-\2-\3_\4-\5-\6/g'
-}
-
-# env: file
-new-file-name() {
-	local file_time=$(guess-file-time)
-	if [[ -z "$file_time" ]]; then
-		return
-	fi
-	local file_dirname=$(dirname "$file")
-	local file_basename=$(basename "$file")
-	local file_ext=$(file-ext | awk '{print tolower($0)}')
-	echo -n "$file_dirname/$file_time${file_suffix:-}$file_ext"
 }
 
 # env: file
@@ -86,41 +32,162 @@ rename-file() {
 	fi
 
 	if [[ -z "$file_new_name" ]]; then
-		errcho "$file does not contain info"
+		errcho "failed guess file timestamp for $file"
 		return
 	fi
 
-	if [[ -e "$file_new_name" ]]; then
-		local file_new_name_index=1
-		while true; do
-			file_new_name=$(file_suffix="_$(printf "%02d" $file_new_name_index)" new-file-name)
-			if [[ -e "$file_new_name" ]]; then
-				file_new_name_index=$[$file_new_name_index + 1 ]
-			else
-				break;
-			fi
-		done
-		echo "cannot rename $file exact: already exist, rename to $file_new_name"
-	fi
-
+	debug file_new_name '(here)' is "$file_new_name"
 	mv "$file" "$file_new_name"
 }
 
-# env: file ...
-rename-files() {
-	if [[ -n "${1:-}" ]]; then
-		while [[ -n "${1:-}" ]]; do
-			file="$1" rename-file
-			shift
+# env: file
+new-file-name() {
+	local file_time=$(guess-file-time)
+	if [[ -z "$file_time" ]]; then
+		return
+	fi
+
+	local file_dirname=$(dirname "$file")
+	local file_basename=$(basename "$file")
+	local file_ext=$(file-ext | awk '{print tolower($0)}')
+
+	local result="$file_dirname/$file_time$file_ext"
+	if [[ "$result" != "$file" && -e "$result" ]]; then
+		for i in $(seq 999999); do
+			local file_suffix="_$(printf "%04d" $i)"
+			result="$file_dirname/$file_time${file_suffix:-}$file_ext"
+			if [[ ! -e "$result" ]]; then
+				break;
+			fi
 		done
+	fi
+
+
+	echo -n "$result"
+}
+
+# env: file
+guess-file-time() {
+	local candidate=$(extract-file-time)
+	if [[ -n "$candidate" ]]; then
+		echo "$candidate"
+		return
+	fi
+
+	errcho 'error ext'
+	# sed -E 's/.*(20[0-9]{2})([0-9]{2})([0-9]{2})_([0-9]{2})([0-9]{2})([0-9]{2})(.*)/\1-\2-\3_\4-\5-\6/g'
+}
+
+# env: file
+extract-file-time() {
+	extract-exif-file-time || extract-name-file-time || true
+}
+
+# env: file
+extract-exif-file-time() {
+	# DateTimeOriginal (date/time when original image was taken)
+	local extracted_time=$(tag=0x9003 extract-exif)
+	if [[ -n "$extracted_time" ]]; then
+		time="$extracted_time" parse-exif-time
+		return
+	fi
+
+	# CreateDate (called DateTimeDigitized by the EXIF spec.)
+	extracted_time=$(tag=0x9004 extract-exif)
+	if [[ -n "$extracted_time" ]]; then
+		time="$extracted_time" parse-exif-time
+		return
+	fi
+
+	# ModifyDate (called DateTime by the EXIF spec.)
+	extracted_time=$(tag=0x0132 extract-exif)
+	if [[ -n "$extracted_time" ]]; then
+		time="$extracted_time" parse-exif-time
+		return
+	fi
+
+	return 1
+}
+
+# txt: try extract file timestamp from file name itself
+# env: file
+extract-name-file-time() {
+	local file_basename=$(basename "$file")
+	debug file_basename is "$file_basename"
+	
+	local cmd1='s|\(20[0-9][0-9]\)\([0-9][0-9]\)\([0-9][0-9]\)_\([0-9][0-9]\)\([0-9][0-9]\)\([0-9][0-9]\).*|\1-\2-\3_\4-\5-\6|g'
+	local cmd2='s|\(20[0-9][0-9]\)\([0-9][0-9]\)\([0-9][0-9]\)\([0-9][0-9]\)\([0-9][0-9]\)\([0-9][0-9]\).*|\1-\2-\3_\4-\5-\6|g'
+	local cmd3='s|\(20[0-9][0-9]\)-\([0-9][0-9]\)-\([0-9][0-9]\)_\([0-9][0-9]\)-\([0-9][0-9]\)-\([0-9][0-9]\).*|\1-\2-\3_\4-\5-\6|g'
+
+	# todo check sed result command
+	debug cmd1 is "$cmd1"
+	local candidate=$(echo "$file_basename" | sed "$cmd1")
+	if [[ "$file_basename" != "$candidate" ]]; then
+		debug result is "$candidate"
+		echo "$candidate"
+		return
+	fi
+
+	local candidate=$(echo "$file_basename" | sed "$cmd2")
+	if [[ "$file_basename" != "$candidate" ]]; then
+		debug result is "$candidate"
+		echo "$candidate"
+		return
+	fi
+
+	local candidate=$(echo "$file_basename" | sed "$cmd3")
+	if [[ "$file_basename" != "$candidate" ]]; then
+		debug result is "$candidate"
+		echo "$candidate"
+		return
+	fi
+
+	local candidate=$(echo "$file_basename" | sed 's|IMG-\(20[0-9][0-9]\)\([0-9][0-9]\)\([0-9][0-9]\)-WA....\..*|\1-\2-\3|g')
+	if [[ "$file_basename" != "$candidate" ]]; then
+		debug result is "$candidate"
+		echo "$candidate"
+		return
+	fi
+
+	local candidate=$(echo "$file_basename" | sed 's|VID-\(20[0-9][0-9]\)\([0-9][0-9]\)\([0-9][0-9]\)-WA....\..*|\1-\2-\3|g')
+	if [[ "$file_basename" != "$candidate" ]]; then
+		debug result is "$candidate"
+		echo "$candidate"
+		return
+	fi
+
+	debug return 1
+	return 1
+}
+
+# env: file
+extract-attr-file-time() {
+	date --reference "$file" '+%Y-%m-%d_%H-%M-%S'
+}
+
+
+
+# env: file
+#      tag
+extract-exif() {
+	exif --machine-readable --tag $tag $file 2> /dev/null | head -n 1
+}
+
+# env: time
+parse-exif-time() {
+	local result="${time//:/-}"
+	result="${result// /_}"
+	echo -n "$result"
+}
+
+
+# env : file
+file-ext() {
+	local file_basename=$(basename -- "$file")
+	local file_ext="${file_basename##*.}"
+	if [[ -n "$file_ext" ]]; then
+		echo -n ".$file_ext"
 	fi
 }
 
-
-main() {
-	file=$1 rename-files "$@"
-
-
-}
-
-main "$@"
+{{include:entry-point}}

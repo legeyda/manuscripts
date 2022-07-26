@@ -1,13 +1,22 @@
 
+read-clipboard() {
+	if installed xclip; then
+		xclip -out || true
+	else
+		message xclip not installed
+	fi
+}
+
 #fun: message hello
 function message() {
-	echo "$@"
-	echo "$@" >> $HOME/ERRORS
+	local msg="$@"
+	echo "$msg"
+	echo "$msg" >> $HOME/ERRORS
 	if is-display-available; then
 		if installed yad; then
-			yad    --info --text "$@" --title nnote	
+			yad    --info --text "$msg" --title nnote	
 		elif installed zenity; then
-			zenity --info --text "$@" --title nnote	
+			zenity --info --text "$msg" --title nnote	
 		else
 			errcho 'neither yad nor zenity installed'
 		fi

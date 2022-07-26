@@ -7,31 +7,29 @@
 
 # env: script_dir
 main() {
-	local title="$@"
-	if [ -z "$title" ]; then
-		user-input-read title
+	local note_title="$@"
+	if [ -z "$note_title" ]; then
+		question='case title' title='new case creation' default="$(read-clipboard)" user-input-read note_title
 
-		if [[ -z "$title" ]]; then
+		if [[ -z "$note_title" ]]; then
 			message empty title
 			return 1
 		fi
 	fi
 
 	local today=`date +%Y-%m-%d`
-	local case_dir="$(get-case-home-dir)/${today}_$title"
+	local case_dir="$(get-case-home-dir)/${today}_$note_title"
 	mkdir -p "$case_dir"
 	code --new-window --goto "$case_dir/notes.txt" "$case_dir"
 }
-
-
 
 
 # env: HOME
 #      NOTE_DIR?
 #      script_dir
 get-case-home-dir() {
-	if [[ -n "${CASE_DIR:-}" ]]; then
-		echo "$CASE_DIR"
+	if [[ -n "${NCASE_DIR:-}" ]]; then
+		echo "$NCASE_DIR"
 	elif [[ -d "$HOME/case" ]]; then
 		echo "$HOME/case"
 	elif [[ -d "$HOME/box/case" ]]; then

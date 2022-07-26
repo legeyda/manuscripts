@@ -2,6 +2,7 @@
 set -eux
 
 {{include:bash-lib}}
+{{include:user-interaction}}
 
 #fun: urlencode str1 str2 str3
 urlencode() {
@@ -25,12 +26,6 @@ urldecode() {
 	local str="$@"
     local url_encoded="${str//+/ }"
     printf '%b' "${url_encoded//%/\\x}"
-}
-
-read-clipboard() {
-	if installed xclip; then
-		xclip -out || true
-	fi
 }
 
 # env: default_answer
