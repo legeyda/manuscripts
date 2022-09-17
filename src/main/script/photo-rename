@@ -21,9 +21,16 @@ rename-files() {
 # env: file
 rename-file() {
 	if [[ ! -f "$file" ]]; then
-		errcho "$file not exists"
+		errcho "$file not found"
 		return 1
 	fi
+
+	if check-canon-file-name; then
+		errcho "$file already named properly, skip" 
+		return
+	fi
+
+
 	local file_new_name=$(new-file-name)
 
 	if [[ "$file" == "$file_new_name" ]]; then
@@ -38,6 +45,17 @@ rename-file() {
 
 	debug file_new_name '(here)' is "$file_new_name"
 	mv "$file" "$file_new_name"
+}
+
+# txt: проверить что файл уже назван
+# env: file
+check-canon-file-name() {
+	local file_short_name=$(file-short-name "$file")
+	debug file_short_name is "$file_short_name"
+	if [[ "$file_short_name" =~ ^20[0-9][0-9]-[0-1][0-9]-[0-3][0-9]_[0-2][0-9]-[0-5][0-9]-[0-5][0-9]$ ]]; then
+		return 0
+	fi
+	return 1
 }
 
 # env: file
@@ -117,7 +135,6 @@ extract-name-file-time() {
 	
 	local cmd1='s|\(20[0-9][0-9]\)\([0-9][0-9]\)\([0-9][0-9]\)_\([0-9][0-9]\)\([0-9][0-9]\)\([0-9][0-9]\).*|\1-\2-\3_\4-\5-\6|g'
 	local cmd2='s|\(20[0-9][0-9]\)\([0-9][0-9]\)\([0-9][0-9]\)\([0-9][0-9]\)\([0-9][0-9]\)\([0-9][0-9]\).*|\1-\2-\3_\4-\5-\6|g'
-	local cmd3='s|\(20[0-9][0-9]\)-\([0-9][0-9]\)-\([0-9][0-9]\)_\([0-9][0-9]\)-\([0-9][0-9]\)-\([0-9][0-9]\).*|\1-\2-\3_\4-\5-\6|g'
 
 	# todo check sed result command
 	debug cmd1 is "$cmd1"
@@ -129,13 +146,6 @@ extract-name-file-time() {
 	fi
 
 	local candidate=$(echo "$file_basename" | sed "$cmd2")
-	if [[ "$file_basename" != "$candidate" ]]; then
-		debug result is "$candidate"
-		echo "$candidate"
-		return
-	fi
-
-	local candidate=$(echo "$file_basename" | sed "$cmd3")
 	if [[ "$file_basename" != "$candidate" ]]; then
 		debug result is "$candidate"
 		echo "$candidate"
@@ -180,11 +190,21 @@ parse-exif-time() {
 	echo -n "$result"
 }
 
+# file-short-name /xyz/abc.txt
+# abc
+file-short-name() {
+	local file_basename=$(basename -- "$1")
+	local candidate="${file_basename%.*}"
+	if [[ -n "$candidate" ]]; then
+		echo "$candidate"
+		return
+	fi
+	echo "$file_basename"
+}
 
 # env : file
 file-ext() {
-	local file_basename=$(basename -- "$file")
-	local file_ext="${file_basename##*.}"
+	local file_ext="${file##*.}"
 	if [[ -n "$file_ext" ]]; then
 		echo -n ".$file_ext"
 	fi
