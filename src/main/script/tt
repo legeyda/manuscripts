@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+main() {
+	local today=$(date +%Y-%m-%d)
+	local dir="$HOME/temp/$today"
+	mkdir -p "$dir"
+	echo "$dir"
+}
+
+{{include:entry-point}}

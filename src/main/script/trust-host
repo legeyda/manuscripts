@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+main() {
+	local host="$1"
+	print-host-pem-cert "$host" | crt-trust
+}
+
+print-host-pem-cert() {
+	keytool -printcert -sslserver "$1" -rfc
+}
+
+pem-to-crt() {
+	openssl x509 -outform der -in - -out -
+}
+
+crt-trust() {
+	ubuntu-crt-trust "$@"
+}
+
+# env: ?host
+# env: RANDOM
+ubuntu-crt-trust() {
+	sudo cat > "/usr/local/share/ca-certificates/${host:-$RANDOM$RANDOM$RANDOM}.crt"
+	sudo update-ca-certificates # -fresh
+}
+
+{{include:entry-point}}
