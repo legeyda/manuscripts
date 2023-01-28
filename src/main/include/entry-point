@@ -8,7 +8,9 @@ entry-point() {
 		set -x
 	fi
 	local script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
-	script_dir="$script_dir" main "$@"
+	if ! script-is-sourced; then
+		script_dir="$script_dir" main "$@"
+	fi
 }
 
 # env: BASH_SOURCE

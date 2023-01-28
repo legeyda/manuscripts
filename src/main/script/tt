@@ -1,10 +1,29 @@
 #!/usr/bin/env bash
 
+
+{{include:bash-lib}}
+{{include:user-interaction.sh}}
+
 main() {
+	local temp_dir="$HOME/temp"
+	mkdir -p "$temp_dir"
+	cd "$temp_dir"
+
 	local today=$(date +%Y-%m-%d)
-	local dir="$HOME/temp/$today"
-	mkdir -p "$dir"
-	echo "$dir"
+	mkdir -p "$today"
+
+	if [[ -e "today" ]]; then
+		if [[ -L "today" ]]; then
+			rm today
+		else
+			local now=$(date '+%Y-%m-%d_%H-%M.%S')
+			mv today "today_backup_${now}"
+		fi
+	fi
+	ln -s "$today" today
+	
+	user-message "today temp dir is: $temp_dir/today" > /dev/null
+	echo "$temp_dir/today"
 }
 
 {{include:entry-point}}

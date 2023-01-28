@@ -8,10 +8,12 @@ read-clipboard() {
 }
 
 #fun: message hello
+# @deprecated
 function message() {
 	local msg="$@"
 	echo "$msg"
 	echo "$msg" >> $HOME/ERRORS
+
 	if is-display-available; then
 		if installed yad; then
 			yad    --info --text "$msg" --title nnote	
@@ -22,6 +24,37 @@ function message() {
 		fi
 	fi	
 }
+
+#fun: user-message hello user this is a message for you
+# env: title?
+function user-message() {
+	local msg="$@"
+	if [[ -z "$msg" ]]; then
+		msg="${text:-}"
+		if [[ -z "$msg" ]]; then
+			errcho 'user-message: neither $@ nor $text specified'
+			return
+		fi
+	fi
+	
+	echo "$msg"
+	if ! is-interactive-shell && is-display-available; then
+		if installed notify-send; then
+			local notify_message="$msg"
+			if [[ -n "${title:-}" ]]; then
+				notify_message="$title: $notify_message"
+			fi
+			notify-send "$notify_message"
+		elif installed yad; then
+			yad    --info --title="${title:-message}" --text "$msg"
+		elif installed zenity; then
+			zenity --info --title="${title:-message}" --text "$msg"
+		else
+			errcho 'user-message: is not interactive shell and display is available but neither yad nor zenity is installed'
+		fi
+	fi
+}
+
 
 function is-interactive-shell() {
 	tty -s || return 1

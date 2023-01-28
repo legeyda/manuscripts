@@ -12,7 +12,7 @@ main() {
 		question='note title' title='new note creation' default="$(read-clipboard)" user-input-read note_title
 
 		if [[ -z "$note_title" ]]; then
-			message "empty title"
+			user-message "empty title!"
 			return 1
 		fi
 	fi

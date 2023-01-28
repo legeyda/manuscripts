@@ -12,15 +12,32 @@ main() {
 		question='case title' title='new case creation' default="$(read-clipboard)" user-input-read note_title
 
 		if [[ -z "$note_title" ]]; then
-			message empty title
+			user-message 'empty title!'
 			return 1
 		fi
 	fi
 
+	local case_home_dir="$(get-case-home-dir)"
 	local today=`date +%Y-%m-%d`
-	local case_dir="$(get-case-home-dir)/${today}_$note_title"
+	local case_dir="$case_home_dir/${today}_$note_title"
 	mkdir -p "$case_dir"
+	safe-link "$case_dir" "$case_home_dir/latest"
 	code --new-window --goto "$case_dir/notes.txt" "$case_dir"
+}
+
+# fun:
+safe-link() {
+	local target="$1"
+	local link="$2"
+	if [[ -e "$link" ]]; then
+		if [[ -L "$link" ]]; then
+			rm "$link"
+		else
+			local now=$(date '+%Y-%m-%d_%H-%M.%S')
+			mv today "latest_backup_${now}"
+		fi
+	fi
+	ln -s "$target" "$link"
 }
 
 
@@ -32,8 +49,6 @@ get-case-home-dir() {
 		echo "$NCASE_DIR"
 	elif [[ -d "$HOME/case" ]]; then
 		echo "$HOME/case"
-	elif [[ -d "$HOME/box/case" ]]; then
-		echo "$HOME/box/case"
 	else
 		mkdir -p "$HOME/case"
 		echo "$HOME/case"

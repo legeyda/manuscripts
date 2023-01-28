@@ -6,7 +6,7 @@ main() {
 }
 
 print-host-pem-cert() {
-	keytool -printcert -sslserver "$1" -rfc
+	keytool -printcert -sslserver -rfc"$1" 
 }
 
 pem-to-crt() {
@@ -20,8 +20,15 @@ crt-trust() {
 # env: ?host
 # env: RANDOM
 ubuntu-crt-trust() {
-	sudo cat > "/usr/local/share/ca-certificates/${host:-$RANDOM$RANDOM$RANDOM}.crt"
+	sudo dd of="/usr/local/share/ca-certificates/${host:-$RANDOM$RANDOM$RANDOM}.crt"
 	sudo update-ca-certificates # -fresh
 }
 
+
+info() {
+	openssl s_client -showcerts -servername gnupg.org -connect "$1" 2>/dev/null | openssl x509 -inform pem -noout -text
+}
+
+
 {{include:entry-point}}
+

@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+{{include:bash-lib}}
+{{include:user-interaction.sh}}
+{{include:file-editor.sh}}
+{{include:external-tool.sh}}
+
+# env: script_dir
+main() {
+	local jks_base64_str="${1:-}"
+	if [ -z "$jks_base64_str" ]; then
+		question='input jsk base64' title='open jks base64' default="$(read-clipboard)" user-input-read jks_base64_str
+
+		if [[ -z "$jks_base64_str" ]]; then
+			user-message 'empty jks base64!'
+			return 1
+		fi
+	fi
+
+	local temp_dir=$(mktemp -d)
+	echo "$jks_base64_str" > "$temp_dir/storage.jks.base64.txt"
+	base64 -d "$temp_dir/storage.jks.base64.txt" > "$temp_dir/storage.jks" || {
+		user-message 'Ошибка декодирования base64'
+		return 2
+	}
+
+	"${JKS_EDITOR:-kse}" "$temp_dir/storage.jks" || {
+		user-message 'Ошибка запуска редактора'
+		return 3
+	}
+}
+
+{{include:entry-point}}
