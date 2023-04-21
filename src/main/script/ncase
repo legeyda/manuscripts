@@ -29,13 +29,11 @@ main() {
 safe-link() {
 	local target="$1"
 	local link="$2"
-	if [[ -e "$link" ]]; then
-		if [[ -L "$link" ]]; then
-			rm "$link"
-		else
-			local now=$(date '+%Y-%m-%d_%H-%M.%S')
-			mv today "latest_backup_${now}"
-		fi
+	if [[ -L "$link" ]]; then
+		rm "$link"
+	elif [[ -e "$link" ]]; then
+		local now=$(date '+%Y-%m-%d_%H-%M.%S')
+		mv today "latest_backup_${now}"
 	fi
 	ln -s "$target" "$link"
 }

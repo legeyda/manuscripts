@@ -1,4 +1,11 @@
 
+
+
+
+
+
+# ======== bash-lib ========
+
 # fun: errcho some message text
 # txt: print message to stderr
 errcho() {

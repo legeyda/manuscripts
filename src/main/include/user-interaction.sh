@@ -1,4 +1,9 @@
 
+
+
+
+# ======== user-interactions ========
+
 read-clipboard() {
 	if installed xclip; then
 		xclip -out || true
